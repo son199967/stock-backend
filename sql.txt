@@ -1,0 +1,107 @@
+create table leader_company
+(
+    id               bigint auto_increment
+        primary key,
+    current_position varchar(255) null,
+    date_of_birth    date         null,
+    domicile         varchar(255) null,
+    id_cart          varchar(255) null,
+    name             varchar(255) null,
+    place_of_birth   varchar(255) null,
+    resident         varchar(255) null
+);
+
+create table price_history
+(
+    id          bigint auto_increment
+        primary key,
+    ave_price   double       not null,
+    change_pc   double       not null,
+    fbvalue     double       not null,
+    fbvol       double       not null,
+    fsvalue     double       not null,
+    fsvolume    double       not null,
+    g1          varchar(255) null,
+    g2          varchar(255) null,
+    g3          varchar(255) null,
+    g4          varchar(255) null,
+    g5          varchar(255) null,
+    g6          varchar(255) null,
+    g7          varchar(255) null,
+    high_price  double       not null,
+    low_price   double       not null,
+    price_ceil  double       not null,
+    price_floor double       not null,
+    price_tc    double       not null,
+    sym         varchar(255) null,
+    time        datetime(6)  null,
+    total_lot   bigint       null
+);
+
+create table stock_info
+(
+    id                     bigint auto_increment
+        primary key,
+    book_value             double       not null,
+    capital_now            bigint       null,
+    custom_eps             double       not null,
+    date_start             date         null,
+    date_start_length      date         null,
+    date_start_price       date         null,
+    history_company_detail varchar(255) null,
+    history_dividend       varchar(255) null,
+    length_lh              bigint       null,
+    length_ny              bigint       null,
+    pe                     double       not null,
+    unit                   int          null,
+    unit_book_value        int          null,
+    washy_eps              double       not null
+);
+
+create table stock_price
+(
+    id                bigint auto_increment
+        primary key,
+    ceil_price        double not null,
+    color             char   not null,
+    custom_price      double not null,
+    floor_price       double not null,
+    height_price      double not null,
+    length            bigint null,
+    low_price         double not null,
+    open_price        double not null,
+    percent_fluctuate double not null,
+    price_fluctuate   double not null,
+    trade_price       double not null
+);
+
+create table stock
+(
+    id             bigint       not null,
+    address        varchar(255) null,
+    code           varchar(255) null,
+    description    varchar(255) null,
+    email          varchar(255) null,
+    logo           varchar(255) null,
+    name_company   varchar(255) null,
+    phone          varchar(255) null,
+    price          double       not null,
+    website        varchar(255) null,
+    stock_price_id bigint       null,
+    `group`        varchar(255) null,
+    stock_info_id  bigint       null,
+    constraint FKcjyfph7o7reyd7849sgystemj
+        foreign key (stock_price_id) references stock_price (id),
+    constraint FKcjyfph7o7reyd7849sgystemk
+        foreign key (stock_info_id) references stock_info (id)
+);
+
+create table user
+(
+    id       bigint       not null
+        primary key,
+    password varchar(255) null,
+    username varchar(255) not null,
+    constraint UK_sb8bbouer5wak8vyiiy4pf2bx
+        unique (username)
+);

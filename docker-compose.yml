@@ -1,0 +1,35 @@
+version: '3'
+services:
+  mysql-standalone:
+    image: 'mysql/mysql-server:5.7.25'
+    volumes:
+      - /var/lib/stock_data
+    environment:
+      - MYSQL_ROOT_PASSWORD=root@1234
+      - MYSQL_DATABASE=stock-db
+      - MYSQL_USER=hust
+      - MYSQL_PASSWORD=hust@1234
+    ports:
+      - "3307:3306"
+#  zookeeper:
+#    container_name:
+#      zookeeper_merge
+#    image:
+#      wurstmeister/zookeeper
+#    ports:
+#      - "2181:2181"
+#  kafka:
+#    container_name:
+#      kafka_merge
+#    image:
+#      wurstmeister/kafka
+#    depends_on:
+#      - zookeeper
+#    ports:
+#      - "9092:9092"
+#    environment:
+#      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_CREATE_TOPICS: "TOPIC-DEMO"
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock

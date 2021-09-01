@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="stock-api" />
+        <module name="stock-app" />
+        <module name="stock-job" />
+        <module name="stock-model" />
+        <module name="stock-process" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="stock-api" target="11" />
+      <module name="stock-app" target="11" />
+      <module name="stock-job" target="11" />
+      <module name="stock-model" target="11" />
+      <module name="stock-process" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="stock-api" options="-parameters" />
+      <module name="stock-app" options="-parameters" />
+      <module name="stock-job" options="-parameters" />
+      <module name="stock-model" options="-parameters" />
+      <module name="stock-process" options="-parameters" />
+    </option>
+  </component>
+</project>
