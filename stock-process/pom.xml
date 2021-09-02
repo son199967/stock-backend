@@ -6,6 +6,8 @@
        <artifactId>stock-api</artifactId>
         <groupId>vn.com.hust.stock</groupId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+
     </parent>
     <groupId>vn.com.hust.stock</groupId>
     <artifactId>stock-process</artifactId>

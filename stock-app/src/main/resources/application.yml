@@ -1,10 +1,10 @@
 server:
-  port: 8080
+  port: 8081
   ssl:
     enabled: false
 
-server.servlet.contextPath: /stock-api/v1
-logging.config: stock-app/config/log4j2.xml
+server.servlet.contextPath: /stock-app/v1
+logging.config: stock-job/config/log4j2.xml
 management:
   endpoints:
     web:
@@ -27,8 +27,8 @@ spring:
       ddl-auto: update
   datasource:
     platform: mysql
-    url: jdbc:mysql://localhost:3307/stock-db?useSSL=false&useUnicode=yes&characterEncoding=UTF-8
+    url: jdbc:mysql://103.107.183.148:3307/stock-db?useSSL=false&useUnicode=yes&characterEncoding=UTF-8
     username: hust
     password: hust@1234
   database:
-    driverClasName: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
