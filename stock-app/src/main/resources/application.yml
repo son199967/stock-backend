@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8080
   ssl:
     enabled: false
 
@@ -13,7 +13,8 @@ management:
 
 #spring.servlet.multipart.enabled: false
 #spring.servlet.multipart.resolve-lazily: false
-
+files:
+  folder: stock-app/template/
 spring:
   jackson:
     serialization:
