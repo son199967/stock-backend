@@ -7,8 +7,9 @@
         <groupId>vn.com.hust.stock</groupId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
-
     </parent>
+
+
     <groupId>vn.com.hust.stock</groupId>
     <artifactId>stock-app</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -16,6 +17,8 @@
     <packaging>jar</packaging>
     <description>Demo project for Spring Boot</description>
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
     </properties>
     <dependencies>
@@ -47,7 +50,7 @@
     </dependencies>
 
     <build>
-        <finalName>bpm-ani-app</finalName>
+        <finalName>stock-app</finalName>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
         <plugins>

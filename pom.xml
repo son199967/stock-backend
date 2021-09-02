@@ -12,6 +12,7 @@
     <artifactId>stock-api</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>stock-api</name>
+    <packaging>pom</packaging>
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>11</java.version>
@@ -22,6 +23,18 @@
         <module>stock-model</module>
         <module>stock-process</module>
     </modules>
+<!--    <properties>-->
+<!--        <revision>1.4.2</revision>-->
+<!--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
+<!--        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>-->
+<!--        <java.version>1.8</java.version>-->
+<!--        <spring.integration.version>5.0.8.RELEASE</spring.integration.version>-->
+<!--        <sonar.exclusions>stock<sonar.exclusions>-->
+<!--&lt;!&ndash;        <sonar.exclusions>bpm-ani-job/src/main/webapp/**/*</sonar.exclusions>&ndash;&gt;-->
+<!--        <bouncycastle.version>1.49</bouncycastle.version>-->
+<!--        <html2pdf.version>2.0.3</html2pdf.version>-->
+<!--        <typography.version>2.0.1</typography.version>-->
+<!--    </properties>-->
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -102,12 +115,113 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.3</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
 
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>build-info</id>
+                            <goals>
+                                <goal>build-info</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                        <skipTests>true</skipTests>
+                        <useFile>false</useFile>
+                        <forkMode>pertest</forkMode>
+                        <argLine>-Xmx2524m</argLine>
+                        <testFailureIgnore>false</testFailureIgnore>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>1.0.1</version>
+                    <configuration>
+                        <updatePomFile>true</updatePomFile>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <!-- Create an effective POM (with versions expanded) for the CLI and documentation -->
+                            <id>flatten-effective-pom</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>flatten</goal>
+                            </goals>
+                            <configuration>
+                                <updatePomFile>false</updatePomFile>
+                                <outputDirectory>${project.build.directory}/effective-pom</outputDirectory>
+                                <flattenedPomFilename>spring-boot-dependencies.xml</flattenedPomFilename>
+                                <flattenMode>oss</flattenMode>
+                                <pomElements>
+                                    <dependencyManagement>expand</dependencyManagement>
+                                    <pluginManagement>expand</pluginManagement>
+                                    <properties>remove</properties>
+                                    <repositories>remove</repositories>
+                                </pomElements>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <!-- Flatten and simplify our own POM for install/deploy -->
+                            <id>flatten-1</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>flatten</goal>
+                            </goals>
+                            <configuration>
+                                <updatePomFile>true</updatePomFile>
+                                <flattenMode>bom</flattenMode>
+                                <pomElements>
+                                    <pluginManagement>keep</pluginManagement>
+                                    <repositories>remove</repositories>
+                                </pomElements>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>flatten</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>flatten</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>flatten.clean</id>
+                            <phase>clean</phase>
+                            <goals>
+                                <goal>clean</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
