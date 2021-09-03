@@ -1,6 +1,6 @@
 version: '3'
 services:
-  mysql-standalone:
+  mysql-stock:
     image: 'mysql/mysql-server:5.7.25'
     volumes:
       - /var/lib/stock_data
@@ -11,19 +11,19 @@ services:
       - MYSQL_PASSWORD=hust@1234
     ports:
       - "3307:3306"
-  springboot-docker-container:
+  stock-api:
     image: stock-app
     ports:
-      - "8081:8080"
+      - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-standalone:3306/stock-db?useUnicode=yes&characterEncoding=UTF-8
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-stock:3306/stock-db?useUnicode=yes&characterEncoding=UTF-8
       SPRING_DATASOURCE_USERNAME: "hust"
       SPRING_DATASOURCE_PASSWORD: "hust@1234"
     build:
       context: "./"
       dockerfile: "Dockerfile"
     depends_on:
-      - mysql-standalone
+      - mysql-stock
 #  zookeeper:
 #    container_name:
 #      zookeeper_merge

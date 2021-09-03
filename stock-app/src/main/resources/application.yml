@@ -4,7 +4,7 @@ server:
     enabled: false
 
 server.servlet.contextPath: /stock-app/v1
-logging.config: stock-job/config/log4j2.xml
+logging.config: stock-app/config/log4j2.xml
 management:
   endpoints:
     web:
