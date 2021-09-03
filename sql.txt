@@ -2,7 +2,7 @@ create table leader_company
 (
     id               bigint auto_increment
         primary key,
-    current_position varchar(255) null,
+    current_positiaon varchar(255) null,
     date_of_birth    date         null,
     domicile         varchar(255) null,
     id_cart          varchar(255) null,
