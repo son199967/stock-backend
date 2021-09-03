@@ -24,6 +24,19 @@ services:
       dockerfile: "Dockerfile"
     depends_on:
       - mysql-stock
+  stock-job:
+    image: stock-job
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-stock:3306/stock-db?useUnicode=yes&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: "hust"
+      SPRING_DATASOURCE_PASSWORD: "hust@1234"
+    build:
+      context: "./"
+      dockerfile: "Dockerfile"
+    depends_on:
+      - mysql-stock
 #  zookeeper:
 #    container_name:
 #      zookeeper_merge
