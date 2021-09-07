@@ -15,9 +15,9 @@
     <bytecodeTargetLevel>
       <module name="stock-api" target="11" />
       <module name="stock-app" target="11" />
-      <module name="stock-job" target="1.8" />
-      <module name="stock-model" target="1.8" />
-      <module name="stock-process" target="1.8" />
+      <module name="stock-job" target="11" />
+      <module name="stock-model" target="11" />
+      <module name="stock-process" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
