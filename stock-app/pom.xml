@@ -20,12 +20,7 @@
         <java.version>11</java.version>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>vn.com.hust.stock</groupId>
-            <artifactId>stock-model</artifactId>
-            <version>1.0.1</version>
-            <classifier>model</classifier>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -35,6 +30,11 @@
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>vn.com.hust.stock</groupId>
+            <artifactId>stock-model</artifactId>
+            <version>1.0.10</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -84,6 +84,4 @@
     </build>
 
 </project>
-
-
 
