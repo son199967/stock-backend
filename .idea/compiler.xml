@@ -7,26 +7,32 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="stock-app" />
+        <module name="stock-userid" />
         <module name="stock-job" />
         <module name="stock-model" />
         <module name="stock-process" />
+        <module name="stock-gw" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="11">
       <module name="stock-api" target="11" />
       <module name="stock-app" target="11" />
+      <module name="stock-gw" target="11" />
       <module name="stock-job" target="11" />
       <module name="stock-model" target="11" />
       <module name="stock-process" target="11" />
+      <module name="stock-userid" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="stock-api" options="-parameters" />
       <module name="stock-app" options="-parameters" />
+      <module name="stock-gw" options="-parameters" />
       <module name="stock-job" options="-parameters" />
       <module name="stock-model" options="-parameters" />
       <module name="stock-process" options="-parameters" />
+      <module name="stock-userid" options="-parameters" />
     </option>
   </component>
 </project>

@@ -34,7 +34,7 @@
         <dependency>
             <groupId>vn.com.hust.stock</groupId>
             <artifactId>stock-model</artifactId>
-            <version>1.0.10</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -46,6 +46,7 @@
             <artifactId>log4j-core</artifactId>
             <version>2.5</version>
         </dependency>
+
     </dependencies>
 
     <build>

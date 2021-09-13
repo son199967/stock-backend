@@ -1,0 +1,42 @@
+server:
+  port: 8091
+  ssl:
+    enabled: false
+
+server.servlet.contextPath: /stock-user/v1
+spring :
+  application :
+  name : user-service
+eureka:
+  client:
+  serviceUrl:
+  defaultZone: http://localhost:8080/eureka
+#x
+#logging.config: stock-job/config/log4j2.xml
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+#
+##spring.servlet.multipart.enabled: false
+##spring.servlet.multipart.resolve-lazily: false
+#
+#spring:
+#  jackson:
+#    serialization:
+#      write-dates-as-timestamps: false
+#  jpa:
+#    database: MYSQL
+#    show-sql: true
+#    format_sql: true
+#    generate-ddl: false
+#    hibernate:
+#      ddl-auto: update
+#  datasource:
+#    platform: mysql
+#    url: jdbc:mysql://103.107.183.148:3307/stock-db?useSSL=false&useUnicode=yes&characterEncoding=UTF-8
+#    username: hust
+#    password: hust@1234
+#  database:
+#    driver-class-name: com.mysql.cj.jdbc.Driver

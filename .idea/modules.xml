@@ -4,9 +4,11 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/stock-api.iml" filepath="$PROJECT_DIR$/stock-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/stock-app/stock-app.iml" filepath="$PROJECT_DIR$/stock-app/stock-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/stock-gw/stock-gw.iml" filepath="$PROJECT_DIR$/stock-gw/stock-gw.iml" />
       <module fileurl="file://$PROJECT_DIR$/stock-job/stock-job.iml" filepath="$PROJECT_DIR$/stock-job/stock-job.iml" />
       <module fileurl="file://$PROJECT_DIR$/stock-model/stock-model.iml" filepath="$PROJECT_DIR$/stock-model/stock-model.iml" />
       <module fileurl="file://$PROJECT_DIR$/stock-process/stock-process.iml" filepath="$PROJECT_DIR$/stock-process/stock-process.iml" />
+      <module fileurl="file://$PROJECT_DIR$/stock-userid/stock-userid.iml" filepath="$PROJECT_DIR$/stock-userid/stock-userid.iml" />
     </modules>
   </component>
 </project>
