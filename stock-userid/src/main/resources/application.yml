@@ -1,9 +1,9 @@
 server:
-  port: 8091
+  port: 5431
   ssl:
     enabled: false
 
-server.servlet.contextPath: /stock-user/v1
+server.servlet.contextPath: 
 spring :
   application :
   name : user-service

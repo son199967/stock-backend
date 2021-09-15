@@ -12,6 +12,11 @@
       <option name="url" value="http://localhost:8081/repository/stockProject" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="Maven Central" />
+      <option name="name" value="Maven Central" />
+      <option name="url" value="http://192.168.66.125:8007/repository/cmc-maven-groups/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="jboss" />
       <option name="name" value="jboss" />
       <option name="url" value="http://localhost:8081/repository/stockProject/" />
@@ -30,6 +35,11 @@
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="http://localhost:8081/repository/stock/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="cmc-maven-groups" />
+      <option name="name" value="cmc-maven-groups" />
+      <option name="url" value="http://192.168.66.125:8007/repository/cmc-maven-groups/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="jboss" />
@@ -62,6 +72,11 @@
       <option name="url" value="http://localhost:8081/repository/stock/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="jboss" />
+      <option name="name" value="jboss" />
+      <option name="url" value="http://192.168.66.125:8007/repository/cmc-maven-groups/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="fusesource" />
       <option name="name" value="fusesource" />
       <option name="url" value="http://localhost:8081/repository/stock/" />
@@ -70,6 +85,11 @@
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="http://localhost:8081/repository/maven-group/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Central Repository" />
+      <option name="url" value="http://192.168.66.125:8007/repository/cmc-maven-groups/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="jboss" />
@@ -142,6 +162,11 @@
       <option name="url" value="http://localhost:8081/repository/stock/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="stock" />
+      <option name="name" value="stock" />
+      <option name="url" value="http://192.168.66.125:8007/repository/cmc-maven-groups/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="Maven Central" />
       <option name="name" value="Maven Central" />
       <option name="url" value="http://localhost:8081/repository/stockProject/" />
@@ -165,6 +190,11 @@
       <option name="id" value="stock" />
       <option name="name" value="stock" />
       <option name="url" value="http://localhost:8081/repository/maven-public" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="fusesource" />
+      <option name="name" value="fusesource" />
+      <option name="url" value="http://192.168.66.125:8007/repository/cmc-maven-groups/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />

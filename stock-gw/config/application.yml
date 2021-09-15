@@ -2,6 +2,13 @@ server:
   port: 8090
   ssl:
     enabled: false
+spring.rabbitmq.host : localhost
+spring.rabbitmq.port : 8091
+spring.rabbitmq.username : guest
+spring.rabbitmq.password : guest
+javainuse.rabbitmq.exchange : javainuse.exchange
+javainuse.rabbitmq.queue : javainuse.queue
+javainuse.rabbitmq.routingkey : javainuse.routingkey
 
 #server.servlet.contextPath:
 #eureka:

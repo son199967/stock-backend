@@ -27,7 +27,7 @@
                     <id>nexus</id>
                     <url>http://172.17.0.3:8081/repository/maven-public/</url>
                     <snapshots>
-                        <enabled>true</enabled>
+                        Artifact    <enabled>true</enabled>
                     </snapshots>
                     <releases>
                         <enabled>true</enabled>
@@ -77,3 +77,4 @@
         <activeProfile>nexus</activeProfile>
     </activeProfiles>
 </settings>
+<!--        docker exec &#45;&#45;user="root" -it (container ID) /bin/bash-->
