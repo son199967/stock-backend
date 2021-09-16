@@ -25,7 +25,7 @@
         <mirror>
             <id>central</id>
             <name>central</name>
-            <url>http://172.17.0.1:8007/repository/cmc-maven-groups/</url>
+            <url>http://192.168.66.125:8007/repository/cmc-maven-groups/</url>
             <mirrorOf>*</mirrorOf>
         </mirror>
 
@@ -36,7 +36,7 @@
             <repositories>
                 <repository>
                     <id>nexus</id>
-                    <url>http://172.17.0.1:8007/repository/cmc-maven-groups/</url>
+                    <url>http://192.168.66.125:8007/repository/cmc-maven-groups/</url>
                     <snapshots>
                         <enabled>true</enabled>
                     </snapshots>
@@ -46,7 +46,7 @@
                 </repository>
                 <repository>
                     <id>snapshot</id>
-                    <url>http://172.17.0.1:8007/repository/cmc-maven-snapshots/</url>
+                    <url>http://192.168.66.125:8007/repository/cmc-maven-snapshots/</url>
                     <snapshots>
                         <enabled>true</enabled>
                     </snapshots>
