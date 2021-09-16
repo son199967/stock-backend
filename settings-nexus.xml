@@ -7,7 +7,17 @@
         <server>
             <id>nexus</id>
             <username>admin</username>
-            <password>son@hust</password>
+            <password>cmc@du21</password>
+        </server>
+        <server>
+            <id>snapshot</id>
+            <username>admin</username>
+            <password>cmc@du21</password>
+        </server>
+        <server>
+            <id>release</id>
+            <username>admin</username>
+            <password>cmc@du21</password>
         </server>
     </servers>
 
@@ -15,9 +25,10 @@
         <mirror>
             <id>central</id>
             <name>central</name>
-            <url>http://172.17.0.3:8081/repository/maven-public/</url>
+            <url>http://172.17.0.1:8007/repository/cmc-maven-groups/</url>
             <mirrorOf>*</mirrorOf>
         </mirror>
+
     </mirrors>
     <profiles>
         <profile>
@@ -25,12 +36,22 @@
             <repositories>
                 <repository>
                     <id>nexus</id>
-                    <url>http://172.17.0.3:8081/repository/maven-public/</url>
+                    <url>http://172.17.0.1:8007/repository/cmc-maven-groups/</url>
                     <snapshots>
-                        Artifact    <enabled>true</enabled>
+                        <enabled>true</enabled>
                     </snapshots>
                     <releases>
                         <enabled>true</enabled>
+                    </releases>
+                </repository>
+                <repository>
+                    <id>snapshot</id>
+                    <url>http://172.17.0.1:8007/repository/cmc-maven-snapshots/</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>false</enabled>
                     </releases>
                 </repository>
                 <repository>
@@ -77,4 +98,3 @@
         <activeProfile>nexus</activeProfile>
     </activeProfiles>
 </settings>
-<!--        docker exec &#45;&#45;user="root" -it (container ID) /bin/bash-->
