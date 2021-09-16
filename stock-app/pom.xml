@@ -10,7 +10,7 @@
     </parent>
     <groupId>vn.com.hust.stock</groupId>
     <artifactId>stock-app</artifactId>
-    <version>1.6.9</version>
+    <version>1.7.0</version>
     <name>stock-app</name>
     <packaging>jar</packaging>
     <description>Demo project for Spring Boot</description>
@@ -32,9 +32,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>vn.com.cmc.du21</groupId>
+            <groupId>vn.com.hust.stock</groupId>
             <artifactId>stock-model</artifactId>
-            <version>1.0.54</version>
+            <version>0.0.51-20210916.025807-1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

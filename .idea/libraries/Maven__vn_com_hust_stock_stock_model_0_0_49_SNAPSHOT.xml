@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: vn.com.hust.stock:stock-model:0.0.49-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/vn/com/hust/stock/stock-model/0.0.49-SNAPSHOT/stock-model-0.0.49-20210916.024847-1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/vn/com/hust/stock/stock-model/0.0.49-SNAPSHOT/stock-model-0.0.49-20210916.024847-1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/vn/com/hust/stock/stock-model/0.0.49-SNAPSHOT/stock-model-0.0.49-20210916.024847-1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
