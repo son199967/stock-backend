@@ -13,6 +13,7 @@ management:
 
 #spring.servlet.multipart.enabled: false
 #spring.servlet.multipart.resolve-lazily: false
+abc: myname
 files:
   folder: stock-app/template/
 spring:
@@ -28,8 +29,8 @@ spring:
       ddl-auto: update
   datasource:
     platform: mysql
-    url: jdbc:mysql://103.107.183.148:3307/stock-db?useSSL=false&useUnicode=yes&characterEncoding=UTF-8
-    username: hust
-    password: hust@1234
+    url: jdbc:mysql://192.168.66.125:3306/stockdb?useSSL=false&useUnicode=yes&characterEncoding=UTF-8
+    username: cmcdu21
+    password: cmc@du21
   database:
     driver-class-name: com.mysql.cj.jdbc.Driver
