@@ -1,10 +1,7 @@
 package vn.com.hust.stock.stockmodel.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.com.hust.stock.stockmodel.enumm.Position;
 import vn.com.hust.stock.stockmodel.until.CustomConverter;
 import vn.com.hust.stock.stockmodel.until.StockHoldConverter;
@@ -17,7 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Data
+@Getter
+@Setter
 public class PositionLeader {
     @JsonProperty("position")
     private Position position;

@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Data
 public class StockHold {
     private String sym;
     private Long length;

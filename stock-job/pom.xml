@@ -21,7 +21,7 @@
         <dependency>
             <groupId>vn.com.hust.stock</groupId>
             <artifactId>stock-model</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.52-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -51,6 +51,16 @@
         <finalName>stock-job</finalName>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>config</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/application.yml</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

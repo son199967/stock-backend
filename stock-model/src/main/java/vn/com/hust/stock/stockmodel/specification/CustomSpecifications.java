@@ -2,6 +2,7 @@ package vn.com.hust.stock.stockmodel.specification;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
 
 public abstract class CustomSpecifications<T> {
@@ -29,10 +30,21 @@ public abstract class CustomSpecifications<T> {
 
         return  (root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get(attributeName), fromDate);
     }
+    public   Specification<T> timeAsc() {
+
+        return this::toPredicate;
+    }
+
+    
+
     public   Specification<T> toDate(String attributeName, LocalDateTime toDate) {
         if (toDate == null) {
             return null;
         }
         return (root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get(attributeName), toDate);
+    }
+
+    private Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+        return (Predicate) criteriaBuilder.asc(root.get("time"));
     }
 }

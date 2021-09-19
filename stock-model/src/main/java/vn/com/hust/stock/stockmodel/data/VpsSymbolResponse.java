@@ -2,9 +2,7 @@ package vn.com.hust.stock.stockmodel.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
 
-@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class VpsSymbolResponse {
     @JsonProperty

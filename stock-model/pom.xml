@@ -16,7 +16,7 @@
     </parent>
     <groupId>vn.com.hust.stock</groupId>
     <artifactId>stock-model</artifactId>
-    <version>0.0.51-SNAPSHOT</version>
+    <version>0.0.52-SNAPSHOT</version>
     <name>stock-model</name>
     <description>Demo project for Spring Boot</description>
     <properties>
@@ -52,11 +52,17 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
             <plugin>
@@ -70,10 +76,18 @@
                         </goals>
                         <configuration>
                             <outputDirectory>target/generated-sources/java</outputDirectory>
-                            <processor>com.querydsl .apt.jpa.JPAAnnotationProcessor</processor>
+                            <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -10,7 +10,6 @@ import lombok.Data;
 import java.util.Collection;
 import java.util.Collections;
 
-@Data
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
     User user;

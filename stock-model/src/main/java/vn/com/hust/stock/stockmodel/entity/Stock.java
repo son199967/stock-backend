@@ -1,10 +1,7 @@
 package vn.com.hust.stock.stockmodel.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.com.hust.stock.stockmodel.enumm.Group;
 
 import javax.persistence.*;
@@ -12,7 +9,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "stock")
 @Builder
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Stock {

@@ -19,7 +19,6 @@ import java.util.Set;
 @Entity
 @Table(name = "stockInfo")
 @Builder
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class StockInfo {

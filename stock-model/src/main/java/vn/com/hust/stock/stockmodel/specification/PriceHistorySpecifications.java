@@ -10,11 +10,11 @@ import javax.inject.Singleton;
 
 @Builder
 public class PriceHistorySpecifications extends CustomSpecifications<PriceHistory> {
-    public   Specification<PriceHistory> eq(PriceHistoryRequest priceHistoryRequest) {
-        Specification<PriceHistory> specification = Specification
-                .where(eq("sym",priceHistoryRequest.getSymbol())
-                        .and(formDate("time",priceHistoryRequest.getFromTime()))
-                        .and(toDate("time",priceHistoryRequest.getToTime())));
-        return specification;
-    }
+//    public   Specification<PriceHistory> eq(PriceHistoryRequest priceHistoryRequest) {
+//        Specification<PriceHistory> specification = Specification
+//                .where(eq("sym",priceHistoryRequest.getSymbol())
+//                        .and(formDate("time",priceHistoryRequest.getFromTime()))
+//                        .and(toDate("time",priceHistoryRequest.getToTime())));
+//        return specification;
+//    }
 }

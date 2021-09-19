@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PriceHistoryService {
     List<PriceHistory> getPriceHistory(PriceHistoryRequest priceHistoryRequest);
+    void calculateSimplePrice();
 }
