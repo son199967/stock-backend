@@ -16,7 +16,7 @@
     </parent>
     <groupId>vn.com.hust.stock</groupId>
     <artifactId>stock-model</artifactId>
-    <version>0.0.52-SNAPSHOT</version>
+    <version>1.0.10-SNAPSHOT</version>
     <name>stock-model</name>
     <description>Demo project for Spring Boot</description>
     <properties>

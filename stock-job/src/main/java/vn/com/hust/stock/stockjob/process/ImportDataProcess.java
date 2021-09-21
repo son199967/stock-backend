@@ -38,7 +38,7 @@ public class ImportDataProcess {
         new Thread(() -> {
             scheduledExecutor = Executors.newScheduledThreadPool(10);
         }).start();
-       importDataFromCsvFile();
+        importDataFromCsvFile();
         System.out.println("+++++++++++++++> done");
     }
 

@@ -34,3 +34,7 @@ spring:
     password: cmc@du21
   database:
     driver-class-name: com.mysql.cj.jdbc.Driver
+bezkoder:
+   app:
+       jwtSecret: bezKoderSecretKey
+       jwtExpirationMs: 86400000

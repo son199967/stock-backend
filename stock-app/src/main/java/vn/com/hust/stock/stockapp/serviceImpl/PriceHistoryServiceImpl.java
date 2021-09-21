@@ -6,6 +6,7 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import org.springframework.util.StringUtils;
@@ -14,6 +15,7 @@ import vn.com.hust.stock.stockapp.service.PriceHistoryService;
 import vn.com.hust.stock.stockmodel.entity.PriceHistory;
 import vn.com.hust.stock.stockmodel.entity.QPriceHistory;
 import vn.com.hust.stock.stockmodel.request.PriceHistoryRequest;
+import vn.com.hust.stock.stockmodel.specification.PriceHistorySpecifications;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -50,6 +52,7 @@ public class PriceHistoryServiceImpl  implements PriceHistoryService {
 //        Specification<PriceHistory> specification =  PriceHistorySpecifications.builder()
 //                .build().eq(priceHistoryRequest);
 //        return priceHistoryRepository.findAll(specification);
+//        return null;
         return null;
     }
 
@@ -124,8 +127,8 @@ public class PriceHistoryServiceImpl  implements PriceHistoryService {
 //    }
 
     public List<PriceHistory> queryPolicyJoinProduct(Predicate condition) {
-//            int offset = page * size;
-           return   new JPAQuery<>(em).select(Q_Price)
+
+           return  new JPAQuery<>(em).select(Q_Price)
                 .from(Q_Price)
                 .where(condition)
                 .orderBy(Q_Price.time.asc()).fetch();

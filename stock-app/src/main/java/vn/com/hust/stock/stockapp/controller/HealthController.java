@@ -1,6 +1,8 @@
 package vn.com.hust.stock.stockapp.controller;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -8,10 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/health")
 public class HealthController {
 
-    @Value("${abc}")
-    private String abc;
     @RequestMapping
-    public String healthCheck(){
-        return "Ready  App "+abc;
+    public ResponseEntity<String> healthCheck(){
+
+        return ResponseEntity.status(HttpStatus.OK).body("ready app");
     }
 }
