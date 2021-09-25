@@ -7,8 +7,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-@Getter
-@Setter
+@Data
 public class PriceHistoryRequest {
     private String symbol;
     @JsonProperty("from_time")

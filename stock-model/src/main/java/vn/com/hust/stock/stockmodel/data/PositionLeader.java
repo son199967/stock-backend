@@ -16,6 +16,7 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
+@Data
 public class PositionLeader {
     @JsonProperty("position")
     private Position position;

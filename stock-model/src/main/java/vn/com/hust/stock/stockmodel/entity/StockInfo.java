@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.com.hust.stock.stockmodel.enumm.Floor;
 import vn.com.hust.stock.stockmodel.enumm.Unit;
 import vn.com.hust.stock.stockmodel.until.MapConvert;
 import vn.com.hust.stock.stockmodel.until.StringArraysConverter;
@@ -18,6 +19,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "stockInfo")
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,7 +41,8 @@ public class StockInfo {
     private LocalDate date_start_price;
     @JsonProperty("date_start_length")
     private LocalDate date_start_length;
-
+    @Enumerated(EnumType.STRING)
+    private Floor floor;
     @JsonProperty("history_dividend")
     @Convert(converter = MapConvert.class)
     private HashMap<LocalDate,String> historyDividend;
@@ -56,5 +59,6 @@ public class StockInfo {
     @Convert(converter = StringArraysConverter.class)
     @JsonProperty("history_company_detail")
     private List<String> historyCompanyDetail;
+
 
 }

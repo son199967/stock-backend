@@ -20,12 +20,13 @@ public class PriceHistoryController {
     public PriceHistoryController(PriceHistoryService priceHistoryService) {
         this.priceHistoryService = priceHistoryService;
     }
-//    @GetMapping
-//    public List<PriceHistory> getPriceHistory(@ModelAttribute PriceHistoryRequest priceHistoryRequest){
-//       return priceHistoryService.getPriceHistory(priceHistoryRequest);
-//    }
     @PutMapping
     public void calculateSimPleReturn(){
         priceHistoryService.calculateSimplePrice();
+    }
+    @GetMapping("/")
+    public List<PriceHistory> getPriceHistory(@ModelAttribute PriceHistoryRequest priceHistoryRe)
+    {
+       return priceHistoryService.getPriceHistory(priceHistoryRe);
     }
 }

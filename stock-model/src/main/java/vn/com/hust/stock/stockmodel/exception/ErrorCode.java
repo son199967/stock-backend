@@ -8,5 +8,7 @@ public interface ErrorCode {
     BusinessErrorCode INVALID_SORT_BY_PARAM = new BusinessErrorCode("ABC-12", "Invalid sortBy parameter Error", 400);
     BusinessErrorCode NOT_FOUND = new BusinessErrorCode("ABC-12", "Not Found", 400);
     BusinessErrorCode EXPIRED_INVALID_TOKEN = new BusinessErrorCode("ABC-1000", "Expired or invalid JWT token", 405);
+    BusinessErrorCode STOCK_EXIST = new BusinessErrorCode("ABC-1000", "Stock has been exist", 400);
+    BusinessErrorCode STOCK_NOT_EXIST = new BusinessErrorCode("ABC-1000", "Stock  hasn't been exist", 400);
 
 }

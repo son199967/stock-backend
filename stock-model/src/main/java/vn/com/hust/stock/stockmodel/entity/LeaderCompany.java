@@ -15,6 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "LeaderCompany")
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class LeaderCompany {
