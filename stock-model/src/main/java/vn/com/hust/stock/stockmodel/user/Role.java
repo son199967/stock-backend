@@ -1,19 +1,14 @@
 package vn.com.hust.stock.stockmodel.user;
 
-import lombok.Data;
-import vn.com.hust.stock.stockmodel.enumm.ERole;
 
-import javax.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
 
-@Entity
-@Table(name = "roles")
-@Data
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private ERole role;
+public enum Role implements GrantedAuthority {
+    ROLE_ADMIN, ROLE_CLIENT;
+
+    public String getAuthority() {
+        return name();
+    }
 
 }
+
