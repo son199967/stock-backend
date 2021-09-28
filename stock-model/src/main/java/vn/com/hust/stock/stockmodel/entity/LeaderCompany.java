@@ -31,6 +31,4 @@ public class LeaderCompany {
     @JsonProperty("current_position")
     @Convert(converter = PositionLeaderConverter.class)
     private List<PositionLeader> currentPosition;
-
-
 }

@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import vn.com.hust.stock.stockmodel.user.Role;
 
 @Configuration
@@ -27,6 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // Disable CSRF (cross site request forgery)
         http.csrf().disable();
+        // Disable CSRF (cross site request forgery)
 
         // No session will be created or used by spring security
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -36,6 +39,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 authorizeRequests()//
                 .antMatchers("/users/signin").permitAll()//
                 .antMatchers("/users/signup").permitAll()//
+                .antMatchers("/stock/**").permitAll()
+                .antMatchers("/price/**").permitAll()
                 // Disallow everything else..
                 .anyRequest().authenticated();
 
@@ -55,6 +60,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/v2/api-docs")//
                 .antMatchers("/swagger-resources/**")//
                 .antMatchers("/swagger-ui.html")//
+                .antMatchers("/stock/**")
+                .antMatchers("/price/**")
                 .antMatchers("/configuration/**")//
                 .antMatchers("/webjars/**")//
                 .antMatchers("/public")
@@ -73,6 +80,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("*")
+                        .allowedMethods("GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS");
+            }
+        };
     }
 
 }

@@ -22,11 +22,16 @@ public class PriceHistoryController {
     }
     @PutMapping
     public void calculateSimPleReturn(){
-        priceHistoryService.calculateSimplePrice();
+        priceHistoryService.calculateListSimplePrice();
     }
-    @GetMapping("/")
+    @GetMapping("")
     public List<PriceHistory> getPriceHistory(@ModelAttribute PriceHistoryRequest priceHistoryRe)
     {
        return priceHistoryService.getPriceHistory(priceHistoryRe);
+    }
+    @GetMapping("/abc")
+    public List<PriceHistory> calculateSimplePrice(@ModelAttribute PriceHistoryRequest priceHistoryRe)
+    {
+        return priceHistoryService.calculateSimplePrice(priceHistoryRe);
     }
 }

@@ -1,16 +1,15 @@
 package vn.com.hust.stock.stockmodel.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.com.hust.stock.stockmodel.enumm.Floor;
 import vn.com.hust.stock.stockmodel.enumm.Unit;
 import vn.com.hust.stock.stockmodel.until.MapConvert;
 import vn.com.hust.stock.stockmodel.until.StringArraysConverter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -19,11 +18,12 @@ import java.util.Set;
 
 @Entity
 @Table(name = "stockInfo")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StockInfo {
+public class StockInfo implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,22 +43,31 @@ public class StockInfo {
     private LocalDate date_start_length;
     @Enumerated(EnumType.STRING)
     private Floor floor;
-    @JsonProperty("history_dividend")
-    @Convert(converter = MapConvert.class)
-    private HashMap<LocalDate,String> historyDividend;
     @JsonProperty("custom_eps")
     private double customEps;
+
     @JsonProperty("washy_eps")
     private double washyEps;
+
     @JsonProperty("pe")
     private double pe;
+
     @JsonProperty("book_value")
     private double bookValue;
+
     @JsonProperty("unit_book_value")
     private Unit unitBookValue;
+
     @Convert(converter = StringArraysConverter.class)
     @JsonProperty("history_company_detail")
     private List<String> historyCompanyDetail;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "stockInfo" ,cascade = CascadeType.MERGE)
+    private List<StockReport> stockReports;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "stockInfo",cascade = CascadeType.MERGE)
+    private List<Indicator> indicators;
+
 
 
 }

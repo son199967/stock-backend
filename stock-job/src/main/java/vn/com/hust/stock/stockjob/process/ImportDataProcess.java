@@ -38,7 +38,8 @@ public class ImportDataProcess {
         new Thread(() -> {
             scheduledExecutor = Executors.newScheduledThreadPool(10);
         }).start();
-        importDataFromCsvFile();
+//        importDataFromCsvFile();
+        importDataFPTFromCsvFile();
         System.out.println("+++++++++++++++> done");
     }
 
@@ -92,5 +93,54 @@ public class ImportDataProcess {
        priceHistory.setFloor(Floor.HSX);
        priceHistoryRepository.save(priceHistory);
        System.out.println(priceHistory.toString()+ "done");
+    }
+    private void importDataFPTFromCsvFile(){
+        int a =0;
+        BufferedReader br = null;
+        try {
+            String line;
+            br = new BufferedReader(new FileReader("/Users/sonnguyen/Documents/code/stock-backend/stock-job/data/Price_FPT_Daily.csv"));
+
+            // How to read file in java line by line?
+            while ((line = br.readLine()) != null) {
+                String finalLine = line;
+                a++;
+                scheduledExecutor.execute(()-> addToDataBaseFPT(parseCsvLineFPT(finalLine)));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (br != null)
+                    br.close();
+            } catch (IOException crunchifyException) {
+                crunchifyException.printStackTrace();
+            }
+        }
+    }
+    public  List<String> parseCsvLineFPT(String csvLine) {
+        List<String> result = new ArrayList<String>();
+        if (csvLine != null) {
+            String[] splitData = csvLine.split(COMMA_DELIMITER);
+            for (int i = 0; i < splitData.length; i++) {
+                result.add(splitData[i]);
+            }
+        }
+        return result;
+    }
+    private  void addToDataBaseFPT(List<String> data) {
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate datetime = LocalDate.parse(data.get(0), pattern);
+        PriceHistory priceHistory = new PriceHistory();
+        priceHistory.setSym("FPT");
+        priceHistory.setOpen(Double.parseDouble(data.get(1)));
+        priceHistory.setTime(datetime);
+        priceHistory.setHigh(Double.parseDouble(data.get(2)));
+        priceHistory.setLow(Double.parseDouble(data.get(3)));
+        priceHistory.setClose(Double.parseDouble(data.get(4)));
+        priceHistory.setVolume(Double.parseDouble(data.get(5)));
+        priceHistory.setFloor(Floor.HSX);
+        priceHistoryRepository.save(priceHistory);
+        System.out.println(priceHistory.toString()+ "done");
     }
 }

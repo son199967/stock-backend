@@ -39,6 +39,4 @@ public class PriceHistory {
     private double volatility;
     private double cumulativeLog;
 
-
-
 }

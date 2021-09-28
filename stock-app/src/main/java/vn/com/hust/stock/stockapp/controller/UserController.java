@@ -4,14 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +15,7 @@ import io.swagger.annotations.Authorization;
 
 import org.modelmapper.ModelMapper;
 import vn.com.hust.stock.stockapp.service.UserService;
+import vn.com.hust.stock.stockmodel.login.LoginRequest;
 import vn.com.hust.stock.stockmodel.user.User;
 import vn.com.hust.stock.stockmodel.user.UserDataDTO;
 import vn.com.hust.stock.stockmodel.user.UserResponseDTO;
@@ -46,10 +40,8 @@ public class UserController {
     @ApiResponses(value = {//
             @ApiResponse(code = 400, message = "Something went wrong"), //
             @ApiResponse(code = 422, message = "Invalid username/password supplied")})
-    public String login(//
-                        @ApiParam("Username") @RequestParam String username, //
-                        @ApiParam("Password") @RequestParam String password) {
-        return userService.signin(username, password);
+    public String login(@RequestBody LoginRequest loginRequest) {
+        return userService.signin(loginRequest.getUsername(), loginRequest.getPassword());
     }
 
     @PostMapping("/signup")

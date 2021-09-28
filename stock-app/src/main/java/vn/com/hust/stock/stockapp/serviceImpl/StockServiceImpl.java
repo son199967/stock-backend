@@ -18,8 +18,11 @@ import vn.com.hust.stock.stockmodel.request.StockRequest;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class StockServiceImpl implements StockService {
@@ -89,6 +92,11 @@ public class StockServiceImpl implements StockService {
     public Stock getStockById(Long id) {
         Stock stock = stockRepository.findById(id)
                 .orElseThrow( ()->new  BusinessException(ErrorCode.STOCK_NOT_EXIST));
+
+
+        List<StockReport> reportList = stock.getStockInfo().getStockReports().stream().sorted(Comparator.comparingInt(StockReport::getYear).thenComparing(StockReport::getPrecious)).collect(Collectors.toList());
+        Collections.reverse(reportList);
+        stock.getStockInfo().setStockReports(reportList);
         return stock;
     }
 
@@ -131,7 +139,7 @@ public class StockServiceImpl implements StockService {
             condition.and(Q_STOCK.nameCompany.like("%"+stockRequest.getName()+"%"));
         }
         if (!StringUtils.isEmpty(stockRequest.getGroupCompany())) {
-            condition.and(Q_STOCK.group.eq(stockRequest.getGroupCompany()));
+            condition.and(Q_STOCK.groupCompany.eq(stockRequest.getGroupCompany()));
         }
         if (stockRequest.getPriceFrom() != 0)
             condition.and(Q_STOCK.price.lt(stockRequest.getPriceFrom()));
