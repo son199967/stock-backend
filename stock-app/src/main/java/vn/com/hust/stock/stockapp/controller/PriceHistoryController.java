@@ -32,6 +32,6 @@ public class PriceHistoryController {
     @GetMapping("/abc")
     public List<PriceHistory> calculateSimplePrice(@ModelAttribute PriceHistoryRequest priceHistoryRe)
     {
-        return priceHistoryService.calculateSimplePrice(priceHistoryRe);
+            return priceHistoryService.calculateSimplePrice(priceHistoryRe);
     }
 }

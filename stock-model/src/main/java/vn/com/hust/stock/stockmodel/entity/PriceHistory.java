@@ -38,5 +38,9 @@ public class PriceHistory {
     private double logReturn;
     private double volatility;
     private double cumulativeLog;
+    private double targetWeights;
+    private double annualisedStandardDeviation;
+    private double constrainedWeightsLeverage;
+    private double numberOfSharesWithEquity;
 
 }

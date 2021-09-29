@@ -32,7 +32,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     private final PriceHistoryRepository priceHistoryRepository;
     private ScheduledExecutorService scheduledExecutor;
     private static final QPriceHistory Q_Price = QPriceHistory.priceHistory;
-    private static int DAY= 59;
+    private static int DAY= 30;
 
 
     @PersistenceContext
@@ -79,14 +79,19 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
             cumulativeLog = coreCalculatePrice(priceHistories, cumulativeLog, i);
         }
         List<Double> simpleReturn = priceHistories.stream().map(p -> p.getSimpleReturn()).collect(Collectors.toList());
+
         for (int k=0;k<DAY;k++){
            simpleReturn.add(0D);
+           priceHistories.get(k).setVolatility(0D);
         }
-        for (int i = 1; i < priceHistories.size(); i++) {
+        for (int i = 1; i < priceHistories.size()-DAY; i++) {
            double setVolatility = calculateSD(simpleReturn, i)* Math.sqrt(252);
-            priceHistories.get(i).setVolatility(setVolatility);
+            priceHistories.get(i+DAY-1).setVolatility(setVolatility);
+            priceHistories.get(i+DAY-1).setAnnualisedStandardDeviation(setVolatility/100);
+            priceHistories.get(i+DAY-1).setTargetWeights(0.07/(setVolatility/100));
+            priceHistories.get(i+DAY-1).setNumberOfSharesWithEquity(100000*(0.07/(setVolatility/100)));
         }
-       priceHistoryRepository.saveAll(priceHistories);
+        priceHistoryRepository.saveAll(priceHistories);
         return priceHistories;
     }
 

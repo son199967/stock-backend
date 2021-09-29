@@ -95,8 +95,12 @@ public class StockServiceImpl implements StockService {
 
 
         List<StockReport> reportList = stock.getStockInfo().getStockReports().stream().sorted(Comparator.comparingInt(StockReport::getYear).thenComparing(StockReport::getPrecious)).collect(Collectors.toList());
-        Collections.reverse(reportList);
+//
+//
+//Collections.reverse(reportList);
+        List<Indicator> indicators = stock.getStockInfo().getIndicators().stream().sorted(Comparator.comparingInt(Indicator::getYear)).collect(Collectors.toList());
         stock.getStockInfo().setStockReports(reportList);
+        stock.getStockInfo().setIndicators(indicators);
         return stock;
     }
 
