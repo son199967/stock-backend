@@ -6,6 +6,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
+import javassist.compiler.ast.Symbol;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -52,46 +53,69 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
 
     @Override
     public List<PriceHistory> getPriceHistory(PriceHistoryRequest priceHistoryRequest) {
-        return queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest));
+        return queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest,priceHistoryRequest.getSymbol().get(0)));
     }
 
     @Override
     public void calculateListSimplePrice() {
         PriceHistoryRequest priceHistoryRequest = new PriceHistoryRequest();
         for (String stock : STOCK_ARRAYS) {
-            priceHistoryRequest.setSymbol(stock);
-            List<PriceHistory> priceHistoryList = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest));
-            scheduledExecutor.execute(() -> priceSimplePriceSymbol(priceHistoryList));
+            priceHistoryRequest.setSymbol(new ArrayList<>(Arrays.asList(stock)));
+            List<PriceHistory> priceHistoryList = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest,stock));
+
+
+            scheduledExecutor.execute(() -> priceSimplePriceSymbol(priceHistoryList,1000000,0.07));
         }
 
     }
     @Override
     public List<PriceHistory> calculateSimplePrice(PriceHistoryRequest priceHistoryRequest) {
-            List<PriceHistory> priceHistoryList = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest));
-            List<PriceHistory> priceHistories = priceSimplePriceSymbol(priceHistoryList);
+            DAY = priceHistoryRequest.getDay();
+            List<PriceHistory> priceHistories = new ArrayList<>();
+            for (String symbol: priceHistoryRequest.getSymbol() ) {
+                List<PriceHistory> priceHistoryList = new ArrayList<>();
+                List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest,symbol));
+                for (int i =0;i<priceHistories1.size();i++){
+                    if (i%priceHistoryRequest.getReDay()==0){
+                        priceHistoryList.add(priceHistories1.get(i));
+                    }
+                }
+
+                List<PriceHistory> abc = priceSimplePriceSymbol(priceHistoryList,priceHistoryRequest.getMoney(),priceHistoryRequest.getRisk());
+                priceHistories.addAll(abc);
+            }
         return priceHistories;
 
     }
 
-    public List<PriceHistory> priceSimplePriceSymbol(List<PriceHistory> priceHistories) {
+    public List<PriceHistory> priceSimplePriceSymbol(List<PriceHistory> priceHistories,int money,double risk) {
         double cumulativeLog = 1;
         for (int i = 1; i < priceHistories.size(); i++) {
             cumulativeLog = coreCalculatePrice(priceHistories, cumulativeLog, i);
         }
+        int numberStock =0;
+        double cash =0.0d;
         List<Double> simpleReturn = priceHistories.stream().map(p -> p.getSimpleReturn()).collect(Collectors.toList());
 
         for (int k=0;k<DAY;k++){
-           simpleReturn.add(0D);
-           priceHistories.get(k).setVolatility(0D);
+                simpleReturn.add(0D);
         }
         for (int i = 1; i < priceHistories.size()-DAY; i++) {
-           double setVolatility = calculateSD(simpleReturn, i)* Math.sqrt(252);
+            double setVolatility = calculateSD(simpleReturn, i)* Math.sqrt(252);
+            if (i>1){
+                money = (int) (numberStock * priceHistories.get(i+DAY-1).getClose() +cash);
+            }
             priceHistories.get(i+DAY-1).setVolatility(setVolatility);
             priceHistories.get(i+DAY-1).setAnnualisedStandardDeviation(setVolatility/100);
-            priceHistories.get(i+DAY-1).setTargetWeights(0.07/(setVolatility/100));
-            priceHistories.get(i+DAY-1).setNumberOfSharesWithEquity(100000*(0.07/(setVolatility/100)));
+            priceHistories.get(i+DAY-1).setTargetWeights(risk/(setVolatility/100));
+            priceHistories.get(i+DAY-1).setNumberOfSharesWithEquity(money*(risk/(setVolatility/100)));
+            cash = money - priceHistories.get(i+DAY-1).getNumberOfSharesWithEquity();
+            priceHistories.get(i+DAY-1).setCash(cash);
+            numberStock = (int) ((money* priceHistories.get(i+DAY-1).getTargetWeights())/priceHistories.get(i+DAY-1).getClose());
+            priceHistories.get(i+DAY-1).setNumberStock(numberStock);
+            priceHistories.get(i+DAY-1).setPriceStock(numberStock*priceHistories.get(i+DAY-1).getClose());
+            priceHistories.get(i+DAY-1).setMoney(money);
         }
-        priceHistoryRepository.saveAll(priceHistories);
         return priceHistories;
     }
 
@@ -111,7 +135,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     }
     public static double calculateSD(List<Double> numArray,int i)
     {
-        double sum = 0.0, standardDeviation = 0.0;
+            double sum = 0.0, standardDeviation = 0.0;
         int length = DAY;
 
         for(int j=0;j<DAY;j++) {
@@ -134,11 +158,11 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
                 .orderBy(Q_Price.time.asc()).fetch();
     }
 
-    private Predicate conditionPriceRe(PriceHistoryRequest priceRe) {
+    private Predicate conditionPriceRe(PriceHistoryRequest priceRe,String sym) {
         BooleanBuilder condition = new BooleanBuilder();
 
         if (!StringUtils.isEmpty(priceRe.getSymbol())) {
-            condition.and(Q_Price.sym.eq(priceRe.getSymbol()));
+            condition.and(Q_Price.sym.eq(sym));
         }
         if (priceRe.getFromTime() != null)
             condition.and(Q_Price.time.after(priceRe.getFromTime()));

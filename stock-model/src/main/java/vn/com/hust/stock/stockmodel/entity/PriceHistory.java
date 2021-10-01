@@ -42,5 +42,9 @@ public class PriceHistory {
     private double annualisedStandardDeviation;
     private double constrainedWeightsLeverage;
     private double numberOfSharesWithEquity;
+    private double cash;
+    private double numberStock;
+    private double money;
+    private double priceStock;
 
 }

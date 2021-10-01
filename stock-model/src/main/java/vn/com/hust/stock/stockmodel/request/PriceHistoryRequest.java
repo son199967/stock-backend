@@ -8,11 +8,18 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
 public class PriceHistoryRequest {
-    private String symbol;
+    private List<String> symbol;
+    private int day;
+    private int reDay;
+    private int money;
+    private double risk;
     @JsonProperty("from_time")
     private LocalDate fromTime;
     @JsonProperty("to_time")
     private LocalDate toTime;
+
 }

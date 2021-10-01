@@ -99,7 +99,7 @@ public class ImportDataProcess {
         BufferedReader br = null;
         try {
             String line;
-            br = new BufferedReader(new FileReader("/Users/sonnguyen/Documents/code/stock-backend/stock-job/data/Price_FPT_Daily.csv"));
+            br = new BufferedReader(new FileReader("/Users/sonnguyen/Documents/code/stock-backend/stock-job/data/Price_BID_Daily.csv"));
 
             // How to read file in java line by line?
             while ((line = br.readLine()) != null) {
@@ -132,13 +132,17 @@ public class ImportDataProcess {
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate datetime = LocalDate.parse(data.get(0), pattern);
         PriceHistory priceHistory = new PriceHistory();
-        priceHistory.setSym("FPT");
+        priceHistory.setSym("BID");
         priceHistory.setOpen(Double.parseDouble(data.get(1)));
         priceHistory.setTime(datetime);
         priceHistory.setHigh(Double.parseDouble(data.get(2)));
         priceHistory.setLow(Double.parseDouble(data.get(3)));
         priceHistory.setClose(Double.parseDouble(data.get(4)));
         priceHistory.setVolume(Double.parseDouble(data.get(5)));
+        priceHistory.setAnnualisedStandardDeviation(0);
+        priceHistory.setNumberOfSharesWithEquity(0);
+        priceHistory.setConstrainedWeightsLeverage(0);
+        priceHistory.setTargetWeights(0);
         priceHistory.setFloor(Floor.HSX);
         priceHistoryRepository.save(priceHistory);
         System.out.println(priceHistory.toString()+ "done");
