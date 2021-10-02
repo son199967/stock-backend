@@ -89,6 +89,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     }
 
     public List<PriceHistory> priceSimplePriceSymbol(List<PriceHistory> priceHistories,int money,double risk) {
+
         double cumulativeLog = 1;
         for (int i = 1; i < priceHistories.size(); i++) {
             cumulativeLog = coreCalculatePrice(priceHistories, cumulativeLog, i);
@@ -171,4 +172,32 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         return condition;
     }
 
+    @Override
+    public List<PriceHistory> loadtest(PriceHistoryRequest priceHistoryRequest) {
+        DAY = priceHistoryRequest.getDay();
+        List<PriceHistory> priceHistories = new ArrayList<>();
+        for (String symbol: priceHistoryRequest.getSymbol() ) {
+
+
+            List<PriceHistory> priceHistoryList = new ArrayList<>();
+            List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest,symbol));
+            for (int i =0;i<priceHistories1.size();i++){
+                if (i%priceHistoryRequest.getReDay()==0){
+                    priceHistoryList.add(priceHistories1.get(i));
+                }
+            }
+
+            List<PriceHistory> abc = priceSimplePriceSymbol(priceHistoryList,priceHistoryRequest.getMoney(),priceHistoryRequest.getRisk());
+            priceHistories.addAll(abc);
+            for (PriceHistory priceHistory1:abc){
+                PriceHistory priceHistory = new PriceHistory();
+                priceHistory.setSym("CASH");
+                priceHistory.setPriceStock(0d);
+                priceHistory.setTime(priceHistory1.getTime());
+                priceHistory.setPriceStock(priceHistory1.getCash());
+                priceHistories.add(priceHistory);
+            }
+        }
+        return priceHistories;
+    }
 }

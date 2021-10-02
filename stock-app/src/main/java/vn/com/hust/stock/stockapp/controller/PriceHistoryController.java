@@ -34,4 +34,9 @@ public class PriceHistoryController {
     {
             return priceHistoryService.calculateSimplePrice(priceHistoryRe);
     }
+    @GetMapping("/loadtest")
+    public List<PriceHistory> loadtest(@ModelAttribute PriceHistoryRequest priceHistoryRe)
+    {
+        return priceHistoryService.loadtest(priceHistoryRe);
+    }
 }

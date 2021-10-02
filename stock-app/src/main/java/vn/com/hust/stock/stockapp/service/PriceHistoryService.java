@@ -9,5 +9,5 @@ public interface PriceHistoryService {
     List<PriceHistory> getPriceHistory(PriceHistoryRequest priceHistoryRequest);
     void calculateListSimplePrice();
     List<PriceHistory> calculateSimplePrice(PriceHistoryRequest priceHistoryRequest);
-
+    List<PriceHistory> loadtest(PriceHistoryRequest priceHistoryRequest);
 }
