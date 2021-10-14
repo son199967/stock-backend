@@ -28,7 +28,7 @@ public class ImportDataProcess {
 
     private static int a =0;
 
-    private static final String COMMA_DELIMITER = ","; // Split by comma
+    private static final String COMMA_DELIMITER = "\",\""; // Split by comma
     private ScheduledExecutorService scheduledExecutor;
 
 
@@ -73,7 +73,7 @@ public class ImportDataProcess {
         if (csvLine != null) {
             String[] splitData = csvLine.split(COMMA_DELIMITER);
             for (int i = 0; i < splitData.length; i++) {
-                result.add(splitData[i]);
+                result.add(splitData[i].replaceAll("\"",""));
             }
         }
         return result;
@@ -91,6 +91,7 @@ public class ImportDataProcess {
        priceHistory.setClose(Double.parseDouble(data.get(5)));
        priceHistory.setVolume(Double.parseDouble(data.get(6)));
        priceHistory.setFloor(Floor.HSX);
+       priceHistory.setPercent((priceHistory.getClose()-priceHistory.getOpen())*100/priceHistory.getOpen());
        priceHistoryRepository.save(priceHistory);
        System.out.println(priceHistory.toString()+ "done");
     }
@@ -99,14 +100,33 @@ public class ImportDataProcess {
         BufferedReader br = null;
         try {
             String line;
-            br = new BufferedReader(new FileReader("/Users/sonnguyen/Documents/code/stock-backend/stock-job/data/Price_BID_Daily.csv"));
+//            br = new BufferedReader(new FileReader("/Users/sonnguyen/Documents/code/stock-backend/stock-job/data/Price_FPT_Daily.csv"));
+//
+//            // How to read file in java line by line?
+//            while ((line = br.readLine()) != null) {
+//                String finalLine = line;
+//                a++;
+//                scheduledExecutor.execute(()-> addToDataBase(parseCsvLine(finalLine), "FPT"));
+//            }
+//            a=0;
+//            br = new BufferedReader(new FileReader("/Users/sonnguyen/Documents/code/stock-backend/stock-job/data/Price_BID_Daily.csv"));
+//
+//            // How to read file in java line by line?
+//            while ((line = br.readLine()) != null) {
+//                String finalLine = line;
+//                a++;
+//                scheduledExecutor.execute(()-> addToDataBase(parseCsvLine(finalLine), "BID"));
+//            }
+//            a=0;
+            br = new BufferedReader(new FileReader("/Users/sonnguyen/Documents/code/stock-backend/stock-job/data/Dữ liệu Lịch sử VN Index (1).csv"));
 
             // How to read file in java line by line?
             while ((line = br.readLine()) != null) {
                 String finalLine = line;
                 a++;
-                scheduledExecutor.execute(()-> addToDataBaseFPT(parseCsvLineFPT(finalLine)));
+                scheduledExecutor.execute(()-> addToDataBaseVNDIREC(parseCsvLine(finalLine), "VNINDEX"));
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -117,6 +137,7 @@ public class ImportDataProcess {
                 crunchifyException.printStackTrace();
             }
         }
+        System.out.println("done");
     }
     public  List<String> parseCsvLineFPT(String csvLine) {
         List<String> result = new ArrayList<String>();
@@ -128,11 +149,11 @@ public class ImportDataProcess {
         }
         return result;
     }
-    private  void addToDataBaseFPT(List<String> data) {
+    private  void addToDataBase(List<String> data,String sym) {
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate datetime = LocalDate.parse(data.get(0), pattern);
         PriceHistory priceHistory = new PriceHistory();
-        priceHistory.setSym("BID");
+        priceHistory.setSym(sym);
         priceHistory.setOpen(Double.parseDouble(data.get(1)));
         priceHistory.setTime(datetime);
         priceHistory.setHigh(Double.parseDouble(data.get(2)));
@@ -144,6 +165,30 @@ public class ImportDataProcess {
         priceHistory.setConstrainedWeightsLeverage(0);
         priceHistory.setTargetWeights(0);
         priceHistory.setFloor(Floor.HSX);
+        priceHistoryRepository.save(priceHistory);
+        System.out.println(priceHistory.toString()+ "done");
+    }
+    private  void addToDataBaseVNDIREC(List<String> data,String sym) {
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate datetime = LocalDate.parse(data.get(0), pattern);
+        PriceHistory priceHistory = new PriceHistory();
+        priceHistory.setSym(sym);
+        priceHistory.setOpen(Double.parseDouble(data.get(2).replace(",","")));
+        priceHistory.setTime(datetime);
+        priceHistory.setHigh(Double.parseDouble(data.get(3).replace(",","")));
+        priceHistory.setLow(Double.parseDouble(data.get(4).replace(",","")));
+        priceHistory.setClose(Double.parseDouble(data.get(1).replace(",","")));
+        String a = data.get(5);
+        if (a.contains("K")){
+            priceHistory.setVolume(Double.parseDouble(a.replace("K",""))*1000);
+        }else if (a.contains("M")){
+            priceHistory.setVolume(Double.parseDouble(a.replace("M",""))*1000000);
+        }
+        priceHistory.setPercent((priceHistory.getClose()-priceHistory.getOpen())*100/priceHistory.getOpen());
+        priceHistory.setAnnualisedStandardDeviation(0);
+        priceHistory.setNumberOfSharesWithEquity(0);
+        priceHistory.setConstrainedWeightsLeverage(0);
+        priceHistory.setTargetWeights(0);
         priceHistoryRepository.save(priceHistory);
         System.out.println(priceHistory.toString()+ "done");
     }

@@ -30,6 +30,10 @@ public class StockController {
     public List<Stock> filterStock(@ModelAttribute StockRequest stockRequest){
         return stockService.filterStockBy(stockRequest);
     }
+    @GetMapping("/symbol")
+    public List<String> getSymbol(@RequestParam(required = false) String sym){
+        return stockService.search(sym);
+    }
     @GetMapping("/{id}")
     public Stock getById(@PathVariable Long id){
         return stockService.getStockById(id);
@@ -38,6 +42,7 @@ public class StockController {
     public void deleteStockById(@PathVariable Long id){
         stockService.deleteById(id);
     }
+
     @DeleteMapping("/{code}")
     public void findStockByCode(@PathVariable String code){
         stockService.getStockByCode(code);

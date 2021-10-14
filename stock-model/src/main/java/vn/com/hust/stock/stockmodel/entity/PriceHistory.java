@@ -1,17 +1,13 @@
 package vn.com.hust.stock.stockmodel.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.com.hust.stock.stockmodel.enumm.Floor;
-import vn.com.hust.stock.stockmodel.until.StringArraysConverter;
-
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
+
 
 @Entity
 @Table(name = "priceHistory")
@@ -33,6 +29,7 @@ public class PriceHistory {
     private LocalDate time;
     @Enumerated(EnumType.STRING)
     private Floor floor;
+    private double percent;
     private double grossReturn;
     private double simpleReturn;
     private double logReturn;
@@ -46,5 +43,4 @@ public class PriceHistory {
     private double numberStock;
     private double money;
     private double priceStock;
-
 }

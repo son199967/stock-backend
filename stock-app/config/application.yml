@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8081
   ssl:
     enabled: false
 
@@ -33,9 +33,9 @@ spring:
       ddl-auto: update
   datasource:
     platform: mysql
-    url: jdbc:mysql://192.168.66.125:3306/stockdb?allowPublicKeyRetrieval=true&useSSL=false
-    username: cmcdu21
-    password: cmc@du21
+    url: jdbc:mysql://localhost:3306/stockdb?allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: root@1234
   database:
     driver-class-name: com.mysql.cj.jdbc.Driver
 security:
@@ -50,3 +50,4 @@ UserController:
   delete: Deletes specific user by username
   search: Returns specific user by username
   me: Returns current user's data
+stock.vn100: "ACB,BID,BVH,CTG,FPT,GAS,GVR,HDB,HPG,KDH,MBB,MSN,MWG,NVL,PDR,PLX,PNJ,POW,SAB,SSI,STB,TCB,TPB,VCB,VHM,VIC,VJC,VNM,VPB,VRE,REE,VNINDEX"

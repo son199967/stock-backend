@@ -1,13 +1,9 @@
 package vn.com.hust.stock.stockmodel.user;
+import vn.com.hust.stock.stockmodel.until.StringArraysConverter;
+
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -29,6 +25,17 @@ public class User {
 
     @ElementCollection(fetch = FetchType.EAGER)
     List<Role> roles;
+
+    @Convert(converter = StringArraysConverter.class)
+    List<String> stockHole;
+
+    public List<String> getStockHole() {
+        return stockHole;
+    }
+
+    public void setStockHole(List<String> stockHole) {
+        this.stockHole = stockHole;
+    }
 
     public Integer getId() {
         return id;

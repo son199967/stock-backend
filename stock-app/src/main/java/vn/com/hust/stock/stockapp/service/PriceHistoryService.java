@@ -1,5 +1,6 @@
 package vn.com.hust.stock.stockapp.service;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import vn.com.hust.stock.stockmodel.entity.PriceHistory;
 import vn.com.hust.stock.stockmodel.request.PriceHistoryRequest;
 
@@ -10,4 +11,7 @@ public interface PriceHistoryService {
     void calculateListSimplePrice();
     List<PriceHistory> calculateSimplePrice(PriceHistoryRequest priceHistoryRequest);
     List<PriceHistory> loadtest(PriceHistoryRequest priceHistoryRequest);
+    List<PriceHistory> priceLast(String field , String order);
+    List<PriceHistory> updateData();
+
 }

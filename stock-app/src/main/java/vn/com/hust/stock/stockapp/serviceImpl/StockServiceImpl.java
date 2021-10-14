@@ -4,6 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import vn.com.hust.stock.stockapp.repository.StockRepository;
@@ -18,10 +19,7 @@ import vn.com.hust.stock.stockmodel.request.StockRequest;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,15 +28,22 @@ public class StockServiceImpl implements StockService {
     private final StockPriceService stockPriceService;
     private final StockInfoService stockInfoService;
 
+    private List<String> vn100;
+
     private static final QStock Q_STOCK = QStock.stock;
     private static final QStockInfo Q_STOCK_INFO = QStockInfo.stockInfo;
     private static final QStockPrice Q_STOCK_PRICE = QStockPrice.stockPrice;
 
     @Autowired
-    public StockServiceImpl(StockRepository stockRepository, StockPriceService stockPriceService, StockInfoService stockInfoService) {
+    public StockServiceImpl(StockRepository stockRepository,
+                            StockPriceService stockPriceService,
+                            StockInfoService stockInfoService,
+                            @Value("${stock.vn100}") String vn100) {
         this.stockRepository = stockRepository;
         this.stockPriceService = stockPriceService;
         this.stockInfoService = stockInfoService;
+        this.vn100 = new ArrayList<>(Arrays.asList(vn100.split(",")));
+
     }
 
 
@@ -92,15 +97,6 @@ public class StockServiceImpl implements StockService {
     public Stock getStockById(Long id) {
         Stock stock = stockRepository.findById(id)
                 .orElseThrow( ()->new  BusinessException(ErrorCode.STOCK_NOT_EXIST));
-
-
-        List<StockReport> reportList = stock.getStockInfo().getStockReports().stream().sorted(Comparator.comparingInt(StockReport::getYear).thenComparing(StockReport::getPrecious)).collect(Collectors.toList());
-//
-//
-//Collections.reverse(reportList);
-        List<Indicator> indicators = stock.getStockInfo().getIndicators().stream().sorted(Comparator.comparingInt(Indicator::getYear)).collect(Collectors.toList());
-        stock.getStockInfo().setStockReports(reportList);
-        stock.getStockInfo().setIndicators(indicators);
         return stock;
     }
 
@@ -116,6 +112,13 @@ public class StockServiceImpl implements StockService {
         List<Stock> stocks = searchStockBy(stockRequest);
 
         return stocks;
+    }
+
+    @Override
+    public List<String> search(String sym) {
+          if (sym ==null)
+              return vn100;
+          return vn100.stream().filter(s -> s.startsWith(sym)).collect(Collectors.toList());
     }
 
     @Override

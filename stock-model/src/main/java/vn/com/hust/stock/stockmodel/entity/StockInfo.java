@@ -58,12 +58,6 @@ public class StockInfo implements Serializable {
     @JsonProperty("unit_book_value")
     private Unit unitBookValue;
 
-    @Convert(converter = StringArraysConverter.class)
-    @JsonProperty("history_company_detail")
-    private List<String> historyCompanyDetail;
-    @JsonManagedReference
-    @OneToMany(mappedBy = "stockInfo" ,cascade = CascadeType.MERGE)
-    private List<StockReport> stockReports;
     @JsonManagedReference
     @OneToMany(mappedBy = "stockInfo",cascade = CascadeType.MERGE)
     private List<Indicator> indicators;

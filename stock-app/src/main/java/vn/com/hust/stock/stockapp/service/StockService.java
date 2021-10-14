@@ -12,4 +12,5 @@ public interface StockService {
     void deleteById(Long id);
     Stock getStockByCode(String  name);
     List<Stock> filterStockBy(StockRequest stockRequest);
+    List<String> search(String sym);
 }

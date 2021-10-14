@@ -36,8 +36,6 @@ public class Indicator implements Serializable {
     private double gos;
 
     private double dar;
-
-
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="stockInfo")

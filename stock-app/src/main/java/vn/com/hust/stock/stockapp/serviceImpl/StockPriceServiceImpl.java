@@ -33,6 +33,5 @@ public class StockPriceServiceImpl implements StockPriceService {
         stockPriceNew.setPrice_fluctuate(stockPrice.getPrice_fluctuate());
         stockPriceNew.setTradePrice(stockPrice.getTradePrice());
         return stockPriceRepository.save(stockPriceNew);
-
     }
 }

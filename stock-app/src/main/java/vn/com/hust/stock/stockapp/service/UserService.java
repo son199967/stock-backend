@@ -9,11 +9,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import vn.com.hust.stock.stockapp.repository.UserRepository;
 import vn.com.hust.stock.stockapp.sercurity.JwtTokenProvider;
 import vn.com.hust.stock.stockmodel.exception.ErrorCode;
 import vn.com.hust.stock.stockmodel.exception.PermissionException;
 import vn.com.hust.stock.stockmodel.user.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -47,6 +51,24 @@ public class UserService {
         } else {
             throw new PermissionException("Username is already in use", ErrorCode.EXPIRED_INVALID_TOKEN);
         }
+    }
+    public User addSymbolsWithUser(String sym, HttpServletRequest request){
+        User user = whoami(request);
+        List<String> list = ObjectUtils.isEmpty(user.getStockHole()) ?new ArrayList<>():user.getStockHole();
+        if (!list.contains(sym)) {
+            list.add(sym);
+        }
+        user.setStockHole(list);
+        return userRepository.save(user);
+    }
+    public User removeSymbolsWithUser(String sym, HttpServletRequest request){
+        User user = whoami(request);
+        List<String> list = ObjectUtils.isEmpty(user.getStockHole()) ?new ArrayList<>():user.getStockHole();
+        if (list.contains(sym)) {
+            list.remove(sym);
+        }
+        user.setStockHole(list);
+        return userRepository.save(user);
     }
 
     public void delete(String username) {
