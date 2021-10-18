@@ -61,7 +61,7 @@ public class UserService {
         user.setStockHole(list);
         return userRepository.save(user);
     }
-    public User removeSymbolsWithUser(String sym, HttpServletRequest request){
+    public User  removeSymbolsWithUser(String sym, HttpServletRequest request){
         User user = whoami(request);
         List<String> list = ObjectUtils.isEmpty(user.getStockHole()) ?new ArrayList<>():user.getStockHole();
         if (list.contains(sym)) {

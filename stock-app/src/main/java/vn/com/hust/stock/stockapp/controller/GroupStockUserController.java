@@ -2,14 +2,13 @@ package vn.com.hust.stock.stockapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.com.hust.stock.stockapp.service.GroupStockUserService;
 import vn.com.hust.stock.stockmodel.entity.PriceHistory;
 import vn.com.hust.stock.stockmodel.request.PriceHistoryRequest;
-
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @RestController
 @RequestMapping("/group")
@@ -26,6 +25,7 @@ public class GroupStockUserController {
        List<PriceHistory> priceHistories = groupStockUserService.getListPriceByUser(request,priceRe);
        return new ResponseEntity<>(priceHistories, HttpStatus.OK);
     }
+
     @PutMapping("/addSymbol")
     private ResponseEntity<List<PriceHistory>> addToGroup(@RequestParam String stock,HttpServletRequest request){
         List<PriceHistory> priceHistories = groupStockUserService.addStock(stock, request);
@@ -33,7 +33,7 @@ public class GroupStockUserController {
     }
     @PutMapping("/removeSymbol")
     private ResponseEntity<List<PriceHistory>> removeToGroup(@RequestParam String stock,HttpServletRequest request){
-        List<PriceHistory> priceHistories = groupStockUserService.addStock(stock, request);
+        List<PriceHistory> priceHistories = groupStockUserService.removeStock(stock, request);
         return new ResponseEntity<>(priceHistories, HttpStatus.OK);
     }
     @GetMapping("/focus")

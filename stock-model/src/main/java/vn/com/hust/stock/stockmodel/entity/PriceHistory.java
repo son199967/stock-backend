@@ -20,7 +20,6 @@ public class PriceHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String sym;
     private double open;
     private double high;
     private double low;

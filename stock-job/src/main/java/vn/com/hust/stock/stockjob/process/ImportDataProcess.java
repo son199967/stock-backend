@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import vn.com.hust.stock.stockjob.repository.PriceHistoryRepository;
 import vn.com.hust.stock.stockmodel.entity.PriceHistory;
 import vn.com.hust.stock.stockmodel.enumm.Floor;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -38,8 +37,7 @@ public class ImportDataProcess {
         new Thread(() -> {
             scheduledExecutor = Executors.newScheduledThreadPool(10);
         }).start();
-//        importDataFromCsvFile();
-        importDataFPTFromCsvFile();
+        importDataFromCsvFile();
         System.out.println("+++++++++++++++> done");
     }
 
@@ -48,7 +46,7 @@ public class ImportDataProcess {
         BufferedReader br = null;
         try {
             String line;
-            br = new BufferedReader(new FileReader("/Users/sonnguyen/Documents/code/stock-backend/stock-job/data/CafeF.HSX.Upto15.09.2021.csv"));
+            br = new BufferedReader(new FileReader("/Users/sonnguyen/Documents/code/stock-backend/stock-job/data/data.csv"));
 
             // How to read file in java line by line?
             while ((line = br.readLine()) != null) {
@@ -86,9 +84,9 @@ public class ImportDataProcess {
        priceHistory.setSym(data.get(0));
        priceHistory.setOpen(Double.parseDouble(data.get(2)));
        priceHistory.setTime(datetime);
-       priceHistory.setHigh(Double.parseDouble(data.get(3)));
-       priceHistory.setLow(Double.parseDouble(data.get(4)));
-       priceHistory.setClose(Double.parseDouble(data.get(5)));
+       priceHistory.setHigh(Double.parseDouble(data.get(4)));
+       priceHistory.setLow(Double.parseDouble(data.get(5)));
+       priceHistory.setClose(Double.parseDouble(data.get(3)));
        priceHistory.setVolume(Double.parseDouble(data.get(6)));
        priceHistory.setFloor(Floor.HSX);
        priceHistory.setPercent((priceHistory.getClose()-priceHistory.getOpen())*100/priceHistory.getOpen());

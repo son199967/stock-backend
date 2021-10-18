@@ -32,14 +32,15 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     private ScheduledExecutorService scheduledExecutor;
     private static final QPriceHistory Q_Price = QPriceHistory.priceHistory;
     private static int DAY = 30;
-    private static int RE_DAY = 15;
+    private static int RE_DAY = 1;
 
     @PersistenceContext
     private EntityManager em;
 
     private List<String> STOCK_ARRAYS;
     @Autowired
-    public PriceHistoryServiceImpl(PriceHistoryRepository priceHistoryRepository,@Value("${stock.vn100}") String vn100) {
+    public PriceHistoryServiceImpl(PriceHistoryRepository priceHistoryRepository,
+                                   @Value("${stock.vn100}") String vn100) {
         STOCK_ARRAYS = new ArrayList<>(Arrays.asList(vn100.split(",")));
         this.priceHistoryRepository = priceHistoryRepository;
         new Thread(() -> {
@@ -86,7 +87,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
             List<PriceHistory> abc = priceSimplePriceSymbol(priceHistoryList, priceHistoryRequest.getMoney(), priceHistoryRequest.getRisk());
             priceHistories.addAll(abc);
         }
-        return priceHistories;
+        return priceHistories.stream().filter(p ->p.getSimpleReturn()!=0d & p.getVolatility()!=0d).collect(Collectors.toList());
 
     }
 
@@ -146,7 +147,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
             priceHistories.get(i + DAY - 1).setPriceStock(numberStock * priceHistories.get(i + DAY - 1).getClose());
             priceHistories.get(i + DAY - 1).setMoney(money);
         }
-        return priceHistories;
+        return priceHistories.stream().filter(p -> p.getSimpleReturn()!=0d& p.getVolatility()!=0d).collect(Collectors.toList());
     }
 
     private double coreCalculatePrice(List<PriceHistory> priceHistories, double cumulativeLog, int i) {
@@ -194,7 +195,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
             condition.and(Q_Price.sym.eq(sym));
         }
         if (priceRe.getFromTime() != null)
-            condition.and(Q_Price.time.after(priceRe.getFromTime()));
+            condition.and(Q_Price.time.after(priceRe.getFromTime().minusDays(DAY)));
         if (priceRe.getToTime() != null)
             condition.and(Q_Price.time.before(priceRe.getToTime()));
         return condition;
@@ -280,6 +281,16 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
                     .from(Q_Price)
                     .where(Q_Price.time.eq(localDate))
                     .orderBy(Q_Price.volume.desc()).fetch();
+        }else if (field.equals("simple")&& order.equals("asc")){
+            return new JPAQuery<>(em).select(Q_Price)
+                    .from(Q_Price)
+                    .where(Q_Price.time.eq(localDate))
+                    .orderBy(Q_Price.simpleReturn.asc()).fetch();
+        }else if (field.equals("simple") && order.equals("desc")){
+            return new JPAQuery<>(em).select(Q_Price)
+                    .from(Q_Price)
+                    .where(Q_Price.time.eq(localDate))
+                    .orderBy(Q_Price.simpleReturn.desc()).fetch();
         }
         return null;
     }

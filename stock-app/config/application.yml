@@ -42,7 +42,7 @@ security:
   jwt:
     token:
       secret-key: secret-key
-      expire-length: 300000
+      expire-length: 3000000
       # 5 minutes duration by default: 5 minutes * 60 seconds * 1000 miliseconds
 UserController:
   signin: Authenticates user and returns its JWT token.
@@ -50,4 +50,13 @@ UserController:
   delete: Deletes specific user by username
   search: Returns specific user by username
   me: Returns current user's data
-stock.vn100: "ACB,BID,BVH,CTG,FPT,GAS,GVR,HDB,HPG,KDH,MBB,MSN,MWG,NVL,PDR,PLX,PNJ,POW,SAB,SSI,STB,TCB,TPB,VCB,VHM,VIC,VJC,VNM,VPB,VRE,REE,VNINDEX"
+stock.bds: "VIC,VHM,VRE,PRD,KDH,REE,DXG,HDG,FLC,ITA"
+stock.ck: "SSI,VND,VCI,HCM,MBS,FTS,SHS,KLB,AGR,TVS"
+stock.cn:  "FPT,FOX,CMG,SAM,SGT,ELC,VEC,ITD,TTN,CNC"
+stock.dp: "DGC,DHG,DVN,IMP,TRA,DMC,CSV,DCL,VFG,OPC"
+stock.hk: "ACV,VJC,HVN,SAS,SGN,NCT,NCS,MAS,NAS,ARM"
+stock.bank: "VCB,TCB,BID,CTG,MBB,VPB,ACB,SHB,STB,TPB,BVH,VIB,HDB,EIB,LPB,BAB,NVB,ABB,PVI,VBB"
+stock.xd: "VCG,DIG,DXG,CTD,HBC,ROS,VCP,VLB,TV2,CC1"
+stock.dk: "GAS,BSR,PLX,PVS,PVD,PVI,PVT,PLC,PET,PGS"
+stock.nhua: "NTP,BMP,AAA,DNP,SVI,INN,RDP,HII,VNP,MCP"
+stock.common: "VNINDEX,HSX,HNX,VN100,VN70,VN30"

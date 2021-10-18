@@ -18,7 +18,6 @@ public class StockPrice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //
     @JsonProperty("trade_price")
     private double tradePrice;
     @JsonProperty("percent_fluctuate")
@@ -27,7 +26,6 @@ public class StockPrice {
     private double price_fluctuate;
     @JsonProperty("color")
     private char color;
-    //
     @JsonProperty("custom_price")
     private double customPrice;
     @JsonProperty("floor_price")

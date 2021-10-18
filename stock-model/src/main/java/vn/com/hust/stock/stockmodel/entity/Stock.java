@@ -34,12 +34,6 @@ public class Stock {
     private double price;
     @JsonProperty("logo")
     private String logo;
-    @JsonProperty("group")
-    private GroupCompany groupCompany;
-    @JsonProperty("stock_info")
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "stockInfo_id", referencedColumnName = "id")
-    private StockInfo stockInfo;
     @JsonProperty("stock_price")
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "stockPrice_id", referencedColumnName = "id")

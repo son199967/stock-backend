@@ -32,3 +32,15 @@ spring:
     password: root@1234
   database:
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+stock.bds: "VIC,VHM,VRE,PRD,KDH,REE,DXG,HDG,FLC,ITA"
+stock.ck: "SSI,VND,VCI,HCM,MBS,FTS,SHS,KLB,AGR,TVS"
+stock.cn:  "FPT,FOX,CMG,SAM,SGT,ELC,VEC,ITD,TTN,CNC"
+stock.dp: "DGC,DHG,DVN,IMP,TRA,DMC,CSV,DCL,VFG,OPC"
+stock.hk: "ACV,VJC,HVN,SAS,SGN,NCT,NCS,MAS,NAS,ARM"
+stock.bank: "VCB,TCB,BID,CTG,MBB,VPB,ACB,SHB,STB,TPB,BVH,VIB,HDB,EIB,LPB,BAB,NVB,ABB,PVI,VBB"
+stock.xd: "VCG,DIG,DXG,CTD,HBC,ROS,VCP,VLB,TV2,CC1"
+stock.dk: "GAS,BSR,PLX,PVS,PVD,PVI,PVT,PLC,PET,PGS"
+stock.nhua: "NTP,BMP,AAA,DNP,SVI,INN,RDP,HII,VNP,MCP"
+stock.common: "VNINDEX,HSX,HNX,VN100,VN70,VN30"
