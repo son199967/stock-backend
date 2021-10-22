@@ -86,7 +86,8 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
             List<PriceHistory> abc = priceSimplePriceSymbol(priceHistoryList, priceHistoryRequest.getMoney(), priceHistoryRequest.getRisk());
             priceHistories.addAll(abc);
         }
-        return priceHistories;
+        return priceHistories.stream().filter(s -> s.getSimpleReturn() !=0 && s.getVolatility()!=0)
+                .sorted(Comparator.comparing(PriceHistory::getTime)).collect(Collectors.toList());
 
     }
 
@@ -270,16 +271,26 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
                     .from(Q_Price)
                     .where(Q_Price.time.eq(localDate))
                     .orderBy(Q_Price.percent.desc()).fetch();
-        } else if (field.equals("volume") && order.equals("asc")) {
+        } else if (field.equals("simple") && order.equals("asc")) {
             return new JPAQuery<>(em).select(Q_Price)
                     .from(Q_Price)
                     .where(Q_Price.time.eq(localDate))
-                    .orderBy(Q_Price.volume.asc()).fetch();
-        } else if (field.equals("volume") && order.equals("asc")) {
+                    .orderBy(Q_Price.simpleReturn.asc()).fetch();
+        } else if (field.equals("simple") && order.equals("desc")) {
             return new JPAQuery<>(em).select(Q_Price)
                     .from(Q_Price)
                     .where(Q_Price.time.eq(localDate))
-                    .orderBy(Q_Price.volume.desc()).fetch();
+                    .orderBy(Q_Price.simpleReturn.desc()).fetch();
+        }else if (field.equals("logReturn") && order.equals("asc")) {
+            return new JPAQuery<>(em).select(Q_Price)
+                    .from(Q_Price)
+                    .where(Q_Price.time.eq(localDate))
+                    .orderBy(Q_Price.logReturn.asc()).fetch();
+        } else if (field.equals("logReturn") && order.equals("desc")) {
+            return new JPAQuery<>(em).select(Q_Price)
+                    .from(Q_Price)
+                    .where(Q_Price.time.eq(localDate))
+                    .orderBy(Q_Price.logReturn.desc()).fetch();
         }
         return null;
     }
