@@ -26,22 +26,18 @@ import java.util.stream.Collectors;
 public class StockServiceImpl implements StockService {
     private final StockRepository stockRepository;
     private final StockPriceService stockPriceService;
-    private final StockInfoService stockInfoService;
 
     private List<String> vn100;
 
     private static final QStock Q_STOCK = QStock.stock;
-    private static final QStockInfo Q_STOCK_INFO = QStockInfo.stockInfo;
     private static final QStockPrice Q_STOCK_PRICE = QStockPrice.stockPrice;
 
     @Autowired
     public StockServiceImpl(StockRepository stockRepository,
                             StockPriceService stockPriceService,
-                            StockInfoService stockInfoService,
                             @Value("${stock.vn100}") String vn100) {
         this.stockRepository = stockRepository;
         this.stockPriceService = stockPriceService;
-        this.stockInfoService = stockInfoService;
         this.vn100 = new ArrayList<>(Arrays.asList(vn100.split(",")));
 
     }
@@ -72,9 +68,6 @@ public class StockServiceImpl implements StockService {
         stockNew.setPrice(stockRe.getPrice());
         stockNew.setWebsite(stockRe.getWebsite());
         StockPrice stockPrice = stockPriceService.createNewStockPrice(stockRe.getStockPrice());
-        StockInfo stockInfo = stockInfoService.createNewStockInFo(stockRe.getStockInfo());
-        stockNew.setStockPrice(stockPrice);
-        stockNew.setStockInfo(stockInfo);
         Stock stockResult = stockRepository.save(stockNew);
         return stockResult;
     }

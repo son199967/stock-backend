@@ -27,7 +27,7 @@ spring:
       ddl-auto: update
   datasource:
     platform: mysql
-    url: jdbc:mysql://localhost:3306/stockdb?allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/stockdb?allowPublicKeyRetrieval=true
     username: root
     password: root@1234
   database:

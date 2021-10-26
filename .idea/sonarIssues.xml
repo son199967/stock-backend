@@ -143,7 +143,27 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/stock-job/pom.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-job/src/main/java/vn/com/hust/stock/stockjob/process/CustomRepository.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/stock-job/src/main/java/vn/com/hust/stock/stockjob/process/ImportDataProcess.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-job/src/main/java/vn/com/hust/stock/stockjob/repository/CustomRepository.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/entity/FileMetaData.java">
           <value>
             <set />
           </value>
@@ -184,6 +204,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/user/User.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$APPLICATION_CONFIG_DIR$/consoles/db/619b22b2-40a8-4bc0-9706-e49cc9d61400/console_1.sql">
           <value>
             <set />
           </value>
