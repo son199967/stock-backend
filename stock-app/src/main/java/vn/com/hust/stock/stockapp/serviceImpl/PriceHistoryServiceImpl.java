@@ -170,11 +170,10 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     }
 
     @Override
-    public List<PriceHistory> loadtest(PriceHistoryRequest priceHistoryRequest) {
+    public List<PriceHistory> loadTest(PriceHistoryRequest priceHistoryRequest) {
         DAY = priceHistoryRequest.getDay();
         List<PriceHistory> priceHistories = new ArrayList<>();
         for (String symbol : priceHistoryRequest.getSymbol()) {
-
 
             List<PriceHistory> priceHistoryList = new ArrayList<>();
             List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest, symbol));

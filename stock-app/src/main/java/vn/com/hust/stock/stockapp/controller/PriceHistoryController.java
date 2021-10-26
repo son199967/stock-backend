@@ -7,7 +7,6 @@ import vn.com.hust.stock.stockmodel.entity.PriceHistory;
 import vn.com.hust.stock.stockmodel.request.PriceHistoryRequest;
 
 import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 @RestController
@@ -43,7 +42,7 @@ public class PriceHistoryController {
     @GetMapping("/loadtest")
     public List<PriceHistory> loadtest(@ModelAttribute PriceHistoryRequest priceHistoryRe)
     {
-        return priceHistoryService.loadtest(priceHistoryRe);
+        return priceHistoryService.loadTest(priceHistoryRe);
     }
     @GetMapping("/pricelast")
     public List<PriceHistory> priceLast(@RequestParam String field ,@RequestParam String order)
