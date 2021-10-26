@@ -7,6 +7,7 @@ import lombok.*;
 import vn.com.hust.stock.stockmodel.enumm.GroupCompany;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "stock")
@@ -38,10 +39,6 @@ public class Stock {
     private String logo;
     @JsonProperty("group")
     private GroupCompany groupCompany;
-    @JsonProperty("stock_info")
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "stockInfo_id", referencedColumnName = "id")
-    private StockInfo stockInfo;
     @JsonProperty("stock_price")
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "stockPrice_id", referencedColumnName = "id")
@@ -50,8 +47,8 @@ public class Stock {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="stockInfo")
     private PriceHistory priceHistory;
-
-
-
+    @JsonManagedReference
+    @OneToMany(mappedBy = "stock",cascade = CascadeType.MERGE)
+    private List<Indicator> indicators;
 
 }

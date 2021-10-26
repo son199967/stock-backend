@@ -34,6 +34,7 @@ public class PriceHistoryController {
     {
         return priceHistoryService.updateData();
     }
+
     @GetMapping("/calculate")
     public List<PriceHistory> calculateSimplePrice(@ModelAttribute PriceHistoryRequest priceHistoryRe)
     {
@@ -48,5 +49,10 @@ public class PriceHistoryController {
     public List<PriceHistory> priceLast(@RequestParam String field ,@RequestParam String order)
     {
         return priceHistoryService.priceLast(field,order);
+    }
+    @GetMapping("/histogram")
+    public List<PriceHistory> histogram()
+    {
+        return priceHistoryService.histogram("simpleReturn","asc");
     }
 }

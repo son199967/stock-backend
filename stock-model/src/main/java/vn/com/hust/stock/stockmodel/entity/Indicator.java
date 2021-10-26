@@ -38,8 +38,8 @@ public class Indicator implements Serializable {
     private double dar;
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="stockInfo")
-    private StockInfo stockInfo;
+    @JoinColumn(name="stock")
+    private Stock stock;
 
 
 

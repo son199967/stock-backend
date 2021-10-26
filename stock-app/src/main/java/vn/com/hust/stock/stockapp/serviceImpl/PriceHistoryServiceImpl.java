@@ -17,6 +17,8 @@ import vn.com.hust.stock.stockapp.service.PriceHistoryService;
 import vn.com.hust.stock.stockmodel.entity.PriceHistory;
 import vn.com.hust.stock.stockmodel.entity.QPriceHistory;
 import vn.com.hust.stock.stockmodel.request.PriceHistoryRequest;
+import vn.com.hust.stock.stockmodel.response.PriceHistoryRes;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
@@ -70,12 +72,6 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         List<PriceHistory> priceHistories = new ArrayList<>();
         LocalDate fromTime = priceHistoryRequest.getFromTime();
         for (String symbol : priceHistoryRequest.getSymbol()) {
-            if (fromTime == null){
-                priceHistoryRequest.setFromTime(LocalDate.now().minusMonths(6));
-                List<PriceHistory> priceHistories6month = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest, symbol));
-                priceHistories.addAll(priceHistories6month);
-                continue;
-            }
             List<PriceHistory> priceHistoryList = new ArrayList<>();
             List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest, symbol));
             for (int i = 0; i < priceHistories1.size(); i++) {
@@ -91,32 +87,6 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
 
     }
 
-    private void caculatePrice(){
-        //        System.out.println("time:" + (System.currentTimeMillis() - time));
-//        long time1 = System.currentTimeMillis();
-//        for (String symbol : priceHistoryRequest.getSymbol()) {
-//            List<PriceHistory> priceHistoryList = new ArrayList<>();
-//            List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest, symbol));
-//            for (int i = 0; i < priceHistories1.size(); i++) {
-//                if (i % priceHistoryRequest.getReDay() == 0) {
-//                    priceHistoryList.add(priceHistories1.get(i));
-//                }
-//            }
-//            List<PriceHistory> abc = new ArrayList<>();
-//            try {
-//                Future<List<PriceHistory>> future= scheduledExecutor.submit(new PriceCalculate(priceHistories, priceHistoryRequest.getDay(),
-//                                priceHistoryRequest.getRisk(), priceHistoryRequest.getMoney()));
-//                while (!future.isDone()){
-//                    Thread.sleep(300);
-//                }
-//                abc= future.get();
-//            } catch (RuntimeException | InterruptedException | ExecutionException exception) {
-//                throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
-//            }
-//            priceHistories.addAll(abc);
-//        }
-//        System.out.println("time1:" + (System.currentTimeMillis() - time1));
-    }
 
     public List<PriceHistory> priceSimplePriceSymbol(List<PriceHistory> priceHistories, int money, double risk) {
 
@@ -168,11 +138,9 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     public static double calculateSD(List<Double> numArray, int i) {
         double sum = 0.0, standardDeviation = 0.0;
         int length = DAY;
-
         for (int j = 0; j < DAY; j++) {
             sum += numArray.get(j + i);
         }
-
         double mean = sum / length;
         for (int j = 0; j < DAY; j++) {
             standardDeviation += Math.pow(numArray.get(j + i) - mean, 2);
@@ -258,6 +226,11 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
             priceHistories.addAll(simplePriceSymbol);
         }
         return priceHistories;
+    }
+
+    @Override
+    public List<PriceHistory> histogram(String field, String order) {
+        return   priceLast(field,order);
     }
 
     public List<PriceHistory> queryPolicyJoin(String field, String order, LocalDate localDate) {

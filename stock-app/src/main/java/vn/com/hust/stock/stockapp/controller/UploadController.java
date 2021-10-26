@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import vn.com.hust.stock.stockapp.service.FileService;
+import vn.com.hust.stock.stockmodel.entity.FileMetaData;
 import vn.com.hust.stock.stockmodel.response.UploadResponse;
 
 @Slf4j

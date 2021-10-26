@@ -1,6 +1,5 @@
 package vn.com.hust.stock.stockmodel.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,8 +32,17 @@ public class PriceHistory {
     private double percent;
     private double grossReturn;
     private double simpleReturn;
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="stockInfo")
+    private double logReturn;
+    private double volatility;
+    private double cumulativeLog;
+    private double targetWeights;
+    private double annualisedStandardDeviation;
+    private double constrainedWeightsLeverage;
+    private double numberOfSharesWithEquity;
+    private double cash;
+    private double numberStock;
+    private double money;
+    private double priceStock;
+    @ManyToOne
     private Stock stock;
 }

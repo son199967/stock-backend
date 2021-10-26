@@ -12,6 +12,7 @@ public interface PriceHistoryService {
     List<PriceHistory> calculateSimplePrice(PriceHistoryRequest priceHistoryRequest);
     List<PriceHistory> loadtest(PriceHistoryRequest priceHistoryRequest);
     List<PriceHistory> priceLast(String field , String order);
+    List<PriceHistory> histogram(String field , String order);
     List<PriceHistory> updateData();
 
 }
