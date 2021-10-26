@@ -1,5 +1,7 @@
 package vn.com.hust.stock.stockmodel.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import vn.com.hust.stock.stockmodel.enumm.GroupCompany;
@@ -44,6 +46,12 @@ public class Stock {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "stockPrice_id", referencedColumnName = "id")
     private StockPrice stockPrice;
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="stockInfo")
+    private PriceHistory priceHistory;
+
+
 
 
 }
