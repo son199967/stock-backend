@@ -54,4 +54,5 @@ public class PriceHistoryController {
     {
         return priceHistoryService.histogram("simpleReturn","asc");
     }
+    @GetMapping("")
 }

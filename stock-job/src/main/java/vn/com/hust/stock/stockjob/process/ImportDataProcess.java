@@ -81,19 +81,20 @@ public class ImportDataProcess {
         STOCK_ARRAYS.put("xd",Arrays.asList("VCG","DIG","DXG","CTD","HBC","ROS","VCP","VLB","TV2","CC1"));
         STOCK_ARRAYS.put("dk",Arrays.asList("GAS","BSR","PLX","PVS","PVD","PVI","PVT","PLC","PET","PGS"));
         STOCK_ARRAYS.put("nhua",Arrays.asList("NTP","BMP","AAA","DNP","SVI","INN","RDP","HII","VNP","MCP"));
-        STOCK_ARRAYS.put("common",Arrays.asList("VNINDEX","HSX","HNX","VN100","VN70","VN30"));
+        STOCK_ARRAYS.put("common",Arrays.asList("VNINDEX","VN30","VN30_HOSE","HNX","HNX30","CONGNGHE","DAUKHI","DICHVU","DUOCPHAM","XAYDUNG",
+                "NANGLUONG","NGANHANG","NHUA","THEP","THUCPHAM","THUONGMAI","THUYSAN","UPCOM","VANTAI","VLXD"));
         int a =0;
         BufferedReader br = null;
         try {
             String line;
-            br = new BufferedReader(new FileReader("/Users/sonnguyen/Documents/HUST/amibroker_all_data.txt"));
+            br = new BufferedReader(new FileReader("D:\\MY_CODE\\amibroker_all_data.txt"));
 
             // How to read file in java line by line?
             while ((line = br.readLine()) != null) {
                 String finalLine = line;
                 a++;
                 log.info("line : {}", line);
-                addToDataBase(parseCsvLine(finalLine));
+               scheduledExecutor.execute(() -> addToDataBase(parseCsvLine(finalLine)));
                 System.out.println("aaaaaa------------>:"+a);
             }
         } catch (IOException e) {
