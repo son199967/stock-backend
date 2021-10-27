@@ -45,14 +45,21 @@ public class PriceHistoryController {
         return priceHistoryService.loadTest(priceHistoryRe);
     }
     @GetMapping("/pricelast")
-    public List<PriceHistory> priceLast(@RequestParam String field ,@RequestParam String order)
+    public List<PriceHistory> priceLast(@RequestParam String field ,@RequestParam String order,@RequestParam(required = false) List<String> sym)
     {
-        return priceHistoryService.priceLast(field,order);
+        return priceHistoryService.priceLast(field,order,sym);
     }
     @GetMapping("/histogram")
     public List<PriceHistory> histogram()
     {
         return priceHistoryService.histogram("simpleReturn","asc");
     }
-    @GetMapping("")
+
+
+    @GetMapping("/groupHistogram")
+    public List<PriceHistory> groupHistogram()
+    {
+        return priceHistoryService.groupHistogram();
+    }
+
 }

@@ -7,6 +7,7 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import javassist.compiler.ast.Symbol;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,14 +36,29 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     private static final QPriceHistory Q_Price = QPriceHistory.priceHistory;
     private static int DAY = 30;
     private static int RE_DAY = 15;
+    private Map<String, List<String>> STOCK_MAP = new HashMap<>();
+    private List<String> STOCK_ARRAYS = new ArrayList<>();
 
     @PersistenceContext
     private EntityManager em;
 
-    private List<String> STOCK_ARRAYS;
     @Autowired
-    public PriceHistoryServiceImpl(PriceHistoryRepository priceHistoryRepository,@Value("${stock.vn100}") String vn100) {
-        STOCK_ARRAYS = new ArrayList<>(Arrays.asList(vn100.split(",")));
+    public PriceHistoryServiceImpl(PriceHistoryRepository priceHistoryRepository) {
+        STOCK_MAP.put("BDS", Arrays.asList("VIC", "VHM", "VRE", "PRD", "KDH", "REE", "DXG", "HDG", "FLC", "ITA"));
+        STOCK_MAP.put("CK", Arrays.asList("SSI", "VND", "VCI", "HCM", "MBS", "FTS", "SHS", "KLB", "AGR", "TVS"));
+        STOCK_MAP.put("CONGNGHE", Arrays.asList("FPT", "FOX", "CMG", "SAM", "SGT", "ELC", "VEC", "ITD", "TTN", "CNC"));
+        STOCK_MAP.put("DUOCPHAM", Arrays.asList("DGC", "DHG", "DVN", "IMP", "TRA", "DMC", "CSV", "DCL", "VFG", "OPC"));
+        STOCK_MAP.put("HK", Arrays.asList("ACV", "VJC", "HVN", "SAS", "SGN", "NCT", "NCS", "MAS", "NAS", "ARM"));
+        STOCK_MAP.put("NGANHANG", Arrays.asList("VCB", "TCB", "BID", "CTG", "MBB", "VPB", "ACB", "SHB", "STB", "TPB", "BVH", "VIB", "HDB", "EIB", "LPB", "BAB", "NVB", "ABB", "PVI", "VBB"));
+        STOCK_MAP.put("XAYDUNG", Arrays.asList("VCG", "DIG", "DXG", "CTD", "HBC", "ROS", "VCP", "VLB", "TV2", "CC1"));
+        STOCK_MAP.put("DAUKHI", Arrays.asList("GAS", "BSR", "PLX", "PVS", "PVD", "PVI", "PVT", "PLC", "PET", "PGS"));
+        STOCK_MAP.put("NHUA", Arrays.asList("NTP", "BMP", "AAA", "DNP", "SVI", "INN", "RDP", "HII", "VNP", "MCP"));
+        STOCK_MAP.put("COMMOM", Arrays.asList("VNINDEX", "VN30", "VN30_HOSE", "HNX", "HNX30", "CONGNGHE", "DAUKHI", "DICHVU", "DUOCPHAM", "XAYDUNG",
+                "NANGLUONG", "NGANHANG", "NHUA", "THEP", "THUCPHAM", "THUONGMAI", "THUYSAN", "UPCOM", "VANTAI", "VLXD", "HK"));
+
+        for (List<String> a : STOCK_MAP.values()) {
+            STOCK_ARRAYS.addAll(a);
+        }
         this.priceHistoryRepository = priceHistoryRepository;
         new Thread(() -> {
             scheduledExecutor = Executors.newScheduledThreadPool(10);
@@ -57,6 +73,8 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     @Override
     public void calculateListSimplePrice() {
         PriceHistoryRequest priceHistoryRequest = new PriceHistoryRequest();
+
+
         for (String stock : STOCK_ARRAYS) {
             priceHistoryRequest.setSymbol(new ArrayList<>(Arrays.asList(stock)));
             List<PriceHistory> priceHistoryList = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest, stock));
@@ -82,7 +100,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
             List<PriceHistory> abc = priceSimplePriceSymbol(priceHistoryList, priceHistoryRequest.getMoney(), priceHistoryRequest.getRisk());
             priceHistories.addAll(abc);
         }
-        return priceHistories.stream().filter(s -> s.getSimpleReturn() !=0 && s.getVolatility()!=0)
+        return priceHistories.stream().filter(s -> s.getSimpleReturn() != 0 && s.getVolatility() != 0)
                 .sorted(Comparator.comparing(PriceHistory::getTime)).collect(Collectors.toList());
 
     }
@@ -198,41 +216,45 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     }
 
     @Override
-    public List<PriceHistory> priceLast(String field, String order) {
+    public List<PriceHistory> priceLast(String field, String order, List<String> syms) {
         LocalDate localDate = new JPAQuery<>(em).select(Q_Price.time).from(Q_Price).orderBy(Q_Price.time.desc()).limit(1).fetch().get(0);
-        return queryPolicyJoin(field,order,localDate);
-
+        return queryPolicyJoin(field, order, localDate, syms);
     }
 
     @Override
     public List<PriceHistory> updateData() {
         List<PriceHistory> priceHistories = new ArrayList<>();
+
         for (String symbol : STOCK_ARRAYS) {
+
             PriceHistoryRequest priceHistoryRequest = new PriceHistoryRequest();
             priceHistoryRequest.setSymbol(new ArrayList<>(Arrays.asList(symbol)));
-            priceHistoryRequest.setFromTime(LocalDate.now().minusMonths(6));
-            priceHistoryRequest.setReDay(RE_DAY);
-            List<PriceHistory> priceHistoryList = new ArrayList<>();
+
             List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest, symbol));
             if (ObjectUtils.isEmpty(priceHistories1)) continue;
-            for (int i = 0; i < priceHistories1.size(); i++) {
-                if (i % priceHistoryRequest.getReDay() == 0) {
-                    priceHistoryList.add(priceHistories1.get(i));
-                }
+
+            double cumulativeLog = 1;
+            for (int i = 1; i < priceHistories1.size(); i++) {
+                cumulativeLog = coreCalculatePrice(priceHistories1, cumulativeLog, i);
             }
-            List<PriceHistory> simplePriceSymbol = priceSimplePriceSymbol(priceHistoryList, priceHistoryRequest.getMoney(), priceHistoryRequest.getRisk());
-            priceHistoryRepository.saveAll(simplePriceSymbol);
-            priceHistories.addAll(simplePriceSymbol);
+            priceHistoryRepository.saveAll(priceHistories1);
+            priceHistories.addAll(priceHistories1);
         }
         return priceHistories;
     }
 
     @Override
     public List<PriceHistory> histogram(String field, String order) {
-        return   priceLast(field,order);
+        return priceLast(field, order,null);
     }
 
-    public List<PriceHistory> queryPolicyJoin(String field, String order, LocalDate localDate) {
+    public List<PriceHistory> queryPolicyJoin(String field, String order, LocalDate localDate, List<String> symbols) {
+        if (!symbols.isEmpty()) {
+            return new JPAQuery<>(em).select(Q_Price)
+                    .from(Q_Price)
+                    .where(Q_Price.time.eq(localDate).and(Q_Price.sym.in(symbols)))
+                    .orderBy(Q_Price.percent.asc()).fetch();
+        }
         if (field.equals("percent") && order.equals("asc")) {
             return new JPAQuery<>(em).select(Q_Price)
                     .from(Q_Price)
@@ -253,7 +275,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
                     .from(Q_Price)
                     .where(Q_Price.time.eq(localDate))
                     .orderBy(Q_Price.simpleReturn.desc()).fetch();
-        }else if (field.equals("logReturn") && order.equals("asc")) {
+        } else if (field.equals("logReturn") && order.equals("asc")) {
             return new JPAQuery<>(em).select(Q_Price)
                     .from(Q_Price)
                     .where(Q_Price.time.eq(localDate))
@@ -265,5 +287,12 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
                     .orderBy(Q_Price.logReturn.desc()).fetch();
         }
         return null;
+    }
+
+
+    @Override
+    public List<PriceHistory> groupHistogram() {
+        List<String> stocks = STOCK_MAP.get("COMMOM");
+        return priceLast(null, null, stocks);
     }
 }

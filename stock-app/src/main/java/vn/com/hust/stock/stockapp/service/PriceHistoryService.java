@@ -10,8 +10,9 @@ public interface PriceHistoryService {
     void calculateListSimplePrice();
     List<PriceHistory> calculateSimplePrice(PriceHistoryRequest priceHistoryRequest);
     List<PriceHistory> loadTest(PriceHistoryRequest priceHistoryRequest);
-    List<PriceHistory> priceLast(String field , String order);
+    List<PriceHistory> priceLast(String field , String order,List<String> syms);
     List<PriceHistory> histogram(String field , String order);
+    List<PriceHistory> groupHistogram();
     List<PriceHistory> updateData();
 
 }

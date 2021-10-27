@@ -34,11 +34,9 @@ public class StockServiceImpl implements StockService {
 
     @Autowired
     public StockServiceImpl(StockRepository stockRepository,
-                            StockPriceService stockPriceService,
-                            @Value("${stock.vn100}") String vn100) {
+                            StockPriceService stockPriceService) {
         this.stockRepository = stockRepository;
         this.stockPriceService = stockPriceService;
-        this.vn100 = new ArrayList<>(Arrays.asList(vn100.split(",")));
 
     }
 
