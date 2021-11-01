@@ -3,7 +3,6 @@ package vn.com.hust.stock.stockapp.service;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -51,24 +50,6 @@ public class UserService {
         } else {
             throw new PermissionException("Username is already in use", ErrorCode.EXPIRED_INVALID_TOKEN);
         }
-    }
-    public User addSymbolsWithUser(String sym, HttpServletRequest request){
-        User user = whoami(request);
-        List<String> list = ObjectUtils.isEmpty(user.getStockHole()) ?new ArrayList<>():user.getStockHole();
-        if (!list.contains(sym)) {
-            list.add(sym);
-        }
-        user.setStockHole(list);
-        return userRepository.save(user);
-    }
-    public User  removeSymbolsWithUser(String sym, HttpServletRequest request){
-        User user = whoami(request);
-        List<String> list = ObjectUtils.isEmpty(user.getStockHole()) ?new ArrayList<>():user.getStockHole();
-        if (list.contains(sym)) {
-            list.remove(sym);
-        }
-        user.setStockHole(list);
-        return userRepository.save(user);
     }
 
     public void delete(String username) {

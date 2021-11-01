@@ -10,7 +10,7 @@ public class PriceHistoryRequest {
     private List<String> symbol;
     private int day;
     private int reDay;
-    private int money;
+    private long money;
     private double risk;
     @JsonProperty("from_time")
     private LocalDate fromTime;

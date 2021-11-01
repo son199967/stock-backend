@@ -1,5 +1,4 @@
 package vn.com.hust.stock.stockmodel.user;
-import vn.com.hust.stock.stockmodel.until.StringArraysConverter;
 
 import java.util.List;
 
@@ -25,17 +24,11 @@ public class User {
 
     @ElementCollection(fetch = FetchType.EAGER)
     List<Role> roles;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.MERGE)
+    List<GroupsStockHold> groupsStockHolds;
 
-    @Convert(converter = StringArraysConverter.class)
-    List<String> stockHole;
 
-    public List<String> getStockHole() {
-        return stockHole;
-    }
 
-    public void setStockHole(List<String> stockHole) {
-        this.stockHole = stockHole;
-    }
 
     public Integer getId() {
         return id;
@@ -77,4 +70,11 @@ public class User {
         this.roles = roles;
     }
 
+    public List<GroupsStockHold> getGroupsStockHolds() {
+        return groupsStockHolds;
+    }
+
+    public void setGroupsStockHolds(List<GroupsStockHold> groupsStockHolds) {
+        this.groupsStockHolds = groupsStockHolds;
+    }
 }

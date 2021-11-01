@@ -1,15 +1,11 @@
 package vn.com.hust.stock.stockapp.serviceImpl;
 
 
-import com.mysql.cj.xdevapi.Collection;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
-import javassist.compiler.ast.Symbol;
-import org.apache.kafka.common.protocol.types.Field;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -17,18 +13,18 @@ import vn.com.hust.stock.stockapp.repository.PriceHistoryRepository;
 import vn.com.hust.stock.stockapp.service.PriceHistoryService;
 import vn.com.hust.stock.stockmodel.entity.PriceHistory;
 import vn.com.hust.stock.stockmodel.entity.QPriceHistory;
+
 import vn.com.hust.stock.stockmodel.request.PriceHistoryRequest;
-import vn.com.hust.stock.stockmodel.response.PriceHistoryRes;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class PriceHistoryServiceImpl implements PriceHistoryService {
 
     private final PriceHistoryRepository priceHistoryRepository;
@@ -36,33 +32,20 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     private static final QPriceHistory Q_Price = QPriceHistory.priceHistory;
     private static int DAY = 30;
     private static int RE_DAY = 15;
-    private Map<String, List<String>> STOCK_MAP = new HashMap<>();
-    private List<String> STOCK_ARRAYS = new ArrayList<>();
+
+     @Autowired
+     private Map<String, List<String>> STOCK_MAPS;
+
+     @Autowired
+     private List<String> STOCK_ARRAYS;
+
 
     @PersistenceContext
     private EntityManager em;
 
     @Autowired
     public PriceHistoryServiceImpl(PriceHistoryRepository priceHistoryRepository) {
-        STOCK_MAP.put("BDS", Arrays.asList("VIC", "VHM", "VRE", "PRD", "KDH", "REE", "DXG", "HDG", "FLC", "ITA"));
-        STOCK_MAP.put("CK", Arrays.asList("SSI", "VND", "VCI", "HCM", "MBS", "FTS", "SHS", "KLB", "AGR", "TVS"));
-        STOCK_MAP.put("CONGNGHE", Arrays.asList("FPT", "FOX", "CMG", "SAM", "SGT", "ELC", "VEC", "ITD", "TTN", "CNC"));
-        STOCK_MAP.put("DUOCPHAM", Arrays.asList("DGC", "DHG", "DVN", "IMP", "TRA", "DMC", "CSV", "DCL", "VFG", "OPC"));
-        STOCK_MAP.put("HK", Arrays.asList("ACV", "VJC", "HVN", "SAS", "SGN", "NCT", "NCS", "MAS", "NAS", "ARM"));
-        STOCK_MAP.put("NGANHANG", Arrays.asList("VCB", "TCB", "BID", "CTG", "MBB", "VPB", "ACB", "SHB", "STB", "TPB", "BVH", "VIB", "HDB", "EIB", "LPB", "BAB", "NVB", "ABB", "PVI", "VBB"));
-        STOCK_MAP.put("XAYDUNG", Arrays.asList("VCG", "DIG", "DXG", "CTD", "HBC", "ROS", "VCP", "VLB", "TV2", "CC1"));
-        STOCK_MAP.put("DAUKHI", Arrays.asList("GAS", "BSR", "PLX", "PVS", "PVD", "PVI", "PVT", "PLC", "PET", "PGS"));
-        STOCK_MAP.put("NHUA", Arrays.asList("NTP", "BMP", "AAA", "DNP", "SVI", "INN", "RDP", "HII", "VNP", "MCP"));
-        STOCK_MAP.put("COMMOM", Arrays.asList("VNINDEX", "VN30", "VN30_HOSE", "HNX", "HNX30", "CONGNGHE", "DAUKHI", "DICHVU", "DUOCPHAM", "XAYDUNG",
-                "NANGLUONG", "NGANHANG", "NHUA", "THEP", "THUCPHAM", "THUONGMAI", "THUYSAN", "UPCOM", "VANTAI", "VLXD", "HK"));
-
-        for (List<String> a : STOCK_MAP.values()) {
-            STOCK_ARRAYS.addAll(a);
-        }
         this.priceHistoryRepository = priceHistoryRepository;
-        new Thread(() -> {
-            scheduledExecutor = Executors.newScheduledThreadPool(10);
-        }).start();
     }
 
     @Override
@@ -106,7 +89,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     }
 
 
-    public List<PriceHistory> priceSimplePriceSymbol(List<PriceHistory> priceHistories, int money, double risk) {
+    public List<PriceHistory> priceSimplePriceSymbol(List<PriceHistory> priceHistories, long money, double risk) {
 
         double cumulativeLog = 1;
         for (int i = 1; i < priceHistories.size(); i++) {
@@ -122,17 +105,19 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         for (int i = 1; i < priceHistories.size() - DAY; i++) {
             double setVolatility = calculateSD(simpleReturn, i) * Math.sqrt(252);
             if (i > 1) {
-                money = (int) (numberStock * priceHistories.get(i + DAY - 1).getClose() + cash);
+                money = (int) (numberStock * priceHistories.get(i + DAY - 1).getClose()*1000 + cash);
             }
             priceHistories.get(i + DAY - 1).setVolatility(setVolatility);
             priceHistories.get(i + DAY - 1).setAnnualisedStandardDeviation(setVolatility / 100);
             priceHistories.get(i + DAY - 1).setTargetWeights(risk / (setVolatility / 100));
-            priceHistories.get(i + DAY - 1).setNumberOfSharesWithEquity(money * (risk / (setVolatility / 100)));
+            System.out.println(risk *100 / (setVolatility));
+            priceHistories.get(i + DAY - 1).setNumberOfSharesWithEquity(money * (risk * 100 / (setVolatility)));
+            System.out.println("getNumberOfSharesWithEquity : "+priceHistories.get(i + DAY - 1).getNumberOfSharesWithEquity());
             cash = money - priceHistories.get(i + DAY - 1).getNumberOfSharesWithEquity();
             priceHistories.get(i + DAY - 1).setCash(cash);
-            numberStock = (int) ((money * priceHistories.get(i + DAY - 1).getTargetWeights()) / priceHistories.get(i + DAY - 1).getClose());
+            numberStock = (int) ((money * priceHistories.get(i + DAY - 1).getTargetWeights()) /( priceHistories.get(i + DAY - 1).getClose()*1000));
             priceHistories.get(i + DAY - 1).setNumberStock(numberStock);
-            priceHistories.get(i + DAY - 1).setPriceStock(numberStock * priceHistories.get(i + DAY - 1).getClose());
+            priceHistories.get(i + DAY - 1).setPriceStock(numberStock * priceHistories.get(i + DAY - 1).getClose()*1000);
             priceHistories.get(i + DAY - 1).setMoney(money);
         }
         return priceHistories;
@@ -212,7 +197,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
                 priceHistories.add(priceHistory);
             }
         }
-        return priceHistories;
+        return priceHistories.stream().filter(p ->p.getMoney() !=0d).collect(Collectors.toList());
     }
 
     @Override
@@ -249,7 +234,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     }
 
     public List<PriceHistory> queryPolicyJoin(String field, String order, LocalDate localDate, List<String> symbols) {
-        if (!symbols.isEmpty()) {
+        if (!ObjectUtils.isEmpty(symbols)) {
             return new JPAQuery<>(em).select(Q_Price)
                     .from(Q_Price)
                     .where(Q_Price.time.eq(localDate).and(Q_Price.sym.in(symbols)))
@@ -292,7 +277,13 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
 
     @Override
     public List<PriceHistory> groupHistogram() {
-        List<String> stocks = STOCK_MAP.get("COMMOM");
+        List<String> stocks = STOCK_MAPS.get("GROUPS");
+        return priceLast(null, null, stocks);
+    }
+
+    @Override
+    public List<PriceHistory> groupCommon() {
+        List<String> stocks = STOCK_MAPS.get("COMMON");
         return priceLast(null, null, stocks);
     }
 }

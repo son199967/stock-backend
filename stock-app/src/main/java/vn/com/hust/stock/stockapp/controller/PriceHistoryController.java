@@ -62,4 +62,10 @@ public class PriceHistoryController {
         return priceHistoryService.groupHistogram();
     }
 
+    @GetMapping("/groupCommom")
+    public List<PriceHistory> groupCommom()
+    {
+        return priceHistoryService.groupCommon();
+    }
+
 }

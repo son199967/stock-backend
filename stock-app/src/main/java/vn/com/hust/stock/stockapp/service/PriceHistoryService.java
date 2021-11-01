@@ -13,6 +13,8 @@ public interface PriceHistoryService {
     List<PriceHistory> priceLast(String field , String order,List<String> syms);
     List<PriceHistory> histogram(String field , String order);
     List<PriceHistory> groupHistogram();
+    List<PriceHistory> groupCommon();
+
     List<PriceHistory> updateData();
 
 }

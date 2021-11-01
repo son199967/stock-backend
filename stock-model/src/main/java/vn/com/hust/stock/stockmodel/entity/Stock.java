@@ -23,18 +23,6 @@ public class Stock {
     private String code;
     @JsonProperty("name_company")
     private String nameCompany;
-    @JsonProperty("description")
-    private String description;
-    @JsonProperty("address")
-    private String address;
-    @JsonProperty("phone")
-    private String phone;
-    @JsonProperty("email")
-    private String email;
-    @JsonProperty("website")
-    private String website;
-    @JsonProperty("price")
-    private double price;
     @JsonProperty("logo")
     private String logo;
     @JsonProperty("group")

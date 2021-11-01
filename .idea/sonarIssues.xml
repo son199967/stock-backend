@@ -23,6 +23,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/config/GroupsStock.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/config/SecurityConfig.java">
           <value>
             <set />
@@ -58,7 +63,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/core/CustomRepository.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/core/PriceCalculate.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/core/PriceHistoryRepository.java">
           <value>
             <set />
           </value>
@@ -69,6 +84,36 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/core/calculateSD.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/repository/CustomRepository.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/repository/GroupStockUserRepository.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/repository/IndicatorRepository.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/repository/PriceHistoryRepository.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/repository/StockRepository.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/sercurity/JwtTokenProvider.java">
           <value>
             <set />
           </value>
@@ -99,6 +144,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/service/UserService.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/serviceImpl/GroupStockUserService.java">
           <value>
             <set />
           </value>
@@ -193,12 +243,67 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/exception/BusinessErrorCode.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/exception/BusinessException.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/exception/ErrorCode.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/request/GroupStockUserReqest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/request/PriceHistoryRequest.java">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/request/PriceRe.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/request/SymbolsAddRequest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/response/GroupStockUserResponse.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/until/StringArraysConverter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/until/User.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/user/GroupsStockHold.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/user/GroupsStockHolds.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/user/StringArraysConverter.java">
           <value>
             <set />
           </value>
@@ -213,7 +318,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$APPLICATION_CONFIG_DIR$/consoles/db/619b22b2-40a8-4bc0-9706-e49cc9d61400/console_2.sql">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$APPLICATION_CONFIG_DIR$/consoles/db/619b22b2-40a8-4bc0-9706-e49cc9d61400/console_3.sql">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="/a.dummy">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="/a.sql">
           <value>
             <set />
           </value>
