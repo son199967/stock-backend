@@ -13,12 +13,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/pom.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/stock-app/config/application.yml">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/stock-app/pom.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/Job/JobSchedule.java">
           <value>
             <set />
           </value>
@@ -68,6 +78,21 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/core/Drawdown.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/core/GZIPCompression.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/core/Interval.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/core/PriceCalculate.java">
           <value>
             <set />
@@ -78,7 +103,27 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/core/Risk.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/core/Sharpe.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/core/StockCalculate.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/core/Values.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/core/Volatility.java">
           <value>
             <set />
           </value>
@@ -194,6 +239,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/stock-job/pom.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-job/src/main/java/vn/com/hust/stock/stockjob/config/AppConfig.java">
           <value>
             <set />
           </value>
