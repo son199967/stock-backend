@@ -2,16 +2,13 @@ package vn.com.hust.stock.stockmodel.response;
 
 import lombok.Data;
 
-import java.time.LocalDate;
-import java.util.List;
-
 @Data
-public class VolatilityStrategyResponse {
-    private LocalDate time;
+public class VolatilitySymbolsResponse {
+    private String symbols;
     private long money;
     private long remainMoney;
+    private double simpleReturn;
     private double targetWight;
     private double constrainedWeightsLeverage;
     private double numberOfSharesWithEquity;
-    private List<VolatilitySymbolsResponse> volSymbols;
 }

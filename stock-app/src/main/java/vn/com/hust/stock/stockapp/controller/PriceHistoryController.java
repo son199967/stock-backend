@@ -2,12 +2,17 @@ package vn.com.hust.stock.stockapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import vn.com.hust.stock.stockapp.core.CorePrice;
+import vn.com.hust.stock.stockapp.core.VolatilityStrategy;
 import vn.com.hust.stock.stockapp.service.PriceHistoryService;
 import vn.com.hust.stock.stockmodel.entity.PriceHistory;
 import vn.com.hust.stock.stockmodel.request.PriceHistoryRequest;
 import vn.com.hust.stock.stockmodel.response.NormalStrategyResponse;
+import vn.com.hust.stock.stockmodel.response.VolatilityStrategyResponse;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
 @RestController
@@ -41,9 +46,9 @@ public class PriceHistoryController {
             return priceHistoryService.calculateSimplePrice(priceHistoryRe);
     }
     @GetMapping("/volatilityStrategy")
-    public List<PriceHistory> volatilityStrategy(@ModelAttribute PriceHistoryRequest priceHistoryRe)
+    public List<VolatilityStrategyResponse> volatilityStrategy(@ModelAttribute PriceHistoryRequest priceHistoryRe)
     {
-        return priceHistoryService.loadTest(priceHistoryRe);
+        return priceHistoryService.volatilityStrategy(priceHistoryRe);
     }
     @GetMapping("/normalStrategy")
     public List<NormalStrategyResponse> normalStrategy(@ModelAttribute PriceHistoryRequest priceHistoryRe)
