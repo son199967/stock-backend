@@ -9,6 +9,7 @@ import java.util.List;
 public class VolatilityStrategyResponse {
     private LocalDate time;
     private long money;
+    private long cash;
     private long remainMoney;
     private double targetWight;
     private double constrainedWeightsLeverage;

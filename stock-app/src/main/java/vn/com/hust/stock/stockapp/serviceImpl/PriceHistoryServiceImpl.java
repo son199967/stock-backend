@@ -175,7 +175,8 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
             }
         }
         VolatilityStrategy volatilityStrategy = new VolatilityStrategy(map,request.getMoney());
-        return volatilityStrategy.volatilityStrategyResponse();
+        List<VolatilityStrategyResponse> responses =  volatilityStrategy.volatilityStrategyResponse();
+        return responses.subList(request.getDay(),responses.size()-1);
 
     }
     public  List<CorePrice>  priceVolatility(List<PriceHistory> priceHistories, long money, double risk, int Day) {
