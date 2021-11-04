@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.com.hust.stock.stockapp.service.PriceHistoryService;
 import vn.com.hust.stock.stockmodel.entity.PriceHistory;
 import vn.com.hust.stock.stockmodel.request.PriceHistoryRequest;
+import vn.com.hust.stock.stockmodel.response.NormalStrategyResponse;
 
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,10 +40,15 @@ public class PriceHistoryController {
     {
             return priceHistoryService.calculateSimplePrice(priceHistoryRe);
     }
-    @GetMapping("/loadtest")
-    public List<PriceHistory> loadtest(@ModelAttribute PriceHistoryRequest priceHistoryRe)
+    @GetMapping("/volatilityStrategy")
+    public List<PriceHistory> volatilityStrategy(@ModelAttribute PriceHistoryRequest priceHistoryRe)
     {
         return priceHistoryService.loadTest(priceHistoryRe);
+    }
+    @GetMapping("/normalStrategy")
+    public List<NormalStrategyResponse> normalStrategy(@ModelAttribute PriceHistoryRequest priceHistoryRe)
+    {
+        return priceHistoryService.normalStrategy(priceHistoryRe);
     }
     @GetMapping("/pricelast")
     public List<PriceHistory> priceLast(@RequestParam String field ,@RequestParam String order,@RequestParam(required = false) List<String> sym)

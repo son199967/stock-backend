@@ -5,16 +5,22 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import vn.com.hust.stock.stockapp.core.CoreCalculatePrice;
 import vn.com.hust.stock.stockapp.repository.PriceHistoryRepository;
 import vn.com.hust.stock.stockapp.service.PriceHistoryService;
 import vn.com.hust.stock.stockmodel.entity.PriceHistory;
 import vn.com.hust.stock.stockmodel.entity.QPriceHistory;
 
+import vn.com.hust.stock.stockmodel.entity.Stock;
+import vn.com.hust.stock.stockmodel.exception.BusinessException;
+import vn.com.hust.stock.stockmodel.exception.ErrorCode;
 import vn.com.hust.stock.stockmodel.request.PriceHistoryRequest;
+import vn.com.hust.stock.stockmodel.response.NormalStrategyResponse;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,14 +36,16 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     private final PriceHistoryRepository priceHistoryRepository;
     private ScheduledExecutorService scheduledExecutor;
     private static final QPriceHistory Q_Price = QPriceHistory.priceHistory;
-    private static int DAY = 30;
-    private static int RE_DAY = 15;
+
 
      @Autowired
      private Map<String, List<String>> STOCK_MAPS;
 
      @Autowired
      private List<String> STOCK_ARRAYS;
+
+     private final int  NORMAL_DAY = 30;
+    private final int  RE_DAY = 1;
 
 
     @PersistenceContext
@@ -61,26 +69,27 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         for (String stock : STOCK_ARRAYS) {
             priceHistoryRequest.setSymbol(new ArrayList<>(Arrays.asList(stock)));
             List<PriceHistory> priceHistoryList = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest, stock));
-
-
-            scheduledExecutor.execute(() -> priceSimplePriceSymbol(priceHistoryList, 1000000, 0.07));
+            scheduledExecutor.execute(() -> priceSimplePriceSymbol(priceHistoryList, 1000000, 0.07,true));
         }
 
     }
 
     @Override
-    public List<PriceHistory> calculateSimplePrice(PriceHistoryRequest priceHistoryRequest) {
+    public List<PriceHistory> calculateSimplePrice(PriceHistoryRequest request) {
         List<PriceHistory> priceHistories = new ArrayList<>();
-        LocalDate fromTime = priceHistoryRequest.getFromTime();
-        for (String symbol : priceHistoryRequest.getSymbol()) {
+        LocalDate fromTime = request.getFromTime();
+        if (request.getReDay() ==0 ){
+            request.setReDay(RE_DAY);
+        }
+        for (String symbol : request.getSymbol()) {
             List<PriceHistory> priceHistoryList = new ArrayList<>();
-            List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest, symbol));
+            List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(request, symbol));
             for (int i = 0; i < priceHistories1.size(); i++) {
-                if (i % priceHistoryRequest.getReDay() == 0) {
+                if (i % request.getReDay() == 0) {
                     priceHistoryList.add(priceHistories1.get(i));
                 }
             }
-            List<PriceHistory> abc = priceSimplePriceSymbol(priceHistoryList, priceHistoryRequest.getMoney(), priceHistoryRequest.getRisk());
+            List<PriceHistory> abc = priceSimplePriceSymbol(priceHistoryList, request.getMoney(), request.getRisk(),request.isAllData());
             priceHistories.addAll(abc);
         }
         return priceHistories.stream().filter(s -> s.getSimpleReturn() != 0 && s.getVolatility() != 0)
@@ -89,66 +98,30 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     }
 
 
-    public List<PriceHistory> priceSimplePriceSymbol(List<PriceHistory> priceHistories, long money, double risk) {
-
+    public List<PriceHistory> priceSimplePriceSymbol(List<PriceHistory> priceHistories, long money, double risk, boolean isAllData) {
+        int DAY = 30;
         double cumulativeLog = 1;
+        List<CoreCalculatePrice> calculatePriceList = new ArrayList<>();
         for (int i = 1; i < priceHistories.size(); i++) {
-            cumulativeLog = coreCalculatePrice(priceHistories, cumulativeLog, i);
+            CoreCalculatePrice calculatePrice = new CoreCalculatePrice(priceHistories.get(i-1),priceHistories.get(i),DAY);
+            calculatePriceList.add(calculatePrice);
+            cumulativeLog = calculatePrice.getCumulativeLogReturn();
         }
-        int numberStock = 0;
-        double cash = 0.0d;
         List<Double> simpleReturn = priceHistories.stream().map(p -> p.getSimpleReturn()).collect(Collectors.toList());
-
-        for (int k = 0; k < DAY; k++) {
-            simpleReturn.add(0D);
-        }
-        for (int i = 1; i < priceHistories.size() - DAY; i++) {
-            double setVolatility = calculateSD(simpleReturn, i) * Math.sqrt(252);
-            if (i > 1) {
-                money = (int) (numberStock * priceHistories.get(i + DAY - 1).getClose()*1000 + cash);
+        if (isAllData) {
+            for (int i = DAY + 1; i < calculatePriceList.size(); i++) {
+                if (i == DAY + 1) {
+                    calculatePriceList.get(i).calculateHigh(simpleReturn.subList(i - DAY, i), DAY, risk, money, true);
+                } else {
+                    calculatePriceList.get(i).calculateHigh(simpleReturn.subList(i - DAY, i), DAY, risk, money, false);
+                }
             }
-            priceHistories.get(i + DAY - 1).setVolatility(setVolatility);
-            priceHistories.get(i + DAY - 1).setAnnualisedStandardDeviation(setVolatility / 100);
-            priceHistories.get(i + DAY - 1).setTargetWeights(risk / (setVolatility / 100));
-            System.out.println(risk *100 / (setVolatility));
-            priceHistories.get(i + DAY - 1).setNumberOfSharesWithEquity(money * (risk * 100 / (setVolatility)));
-            System.out.println("getNumberOfSharesWithEquity : "+priceHistories.get(i + DAY - 1).getNumberOfSharesWithEquity());
-            cash = money - priceHistories.get(i + DAY - 1).getNumberOfSharesWithEquity();
-            priceHistories.get(i + DAY - 1).setCash(cash);
-            numberStock = (int) ((money * priceHistories.get(i + DAY - 1).getTargetWeights()) /( priceHistories.get(i + DAY - 1).getClose()*1000));
-            priceHistories.get(i + DAY - 1).setNumberStock(numberStock);
-            priceHistories.get(i + DAY - 1).setPriceStock(numberStock * priceHistories.get(i + DAY - 1).getClose()*1000);
-            priceHistories.get(i + DAY - 1).setMoney(money);
         }
-        return priceHistories;
-    }
-
-    private double coreCalculatePrice(List<PriceHistory> priceHistories, double cumulativeLog, int i) {
-        PriceHistory priceHistory = priceHistories.get(i);
-        double priceT = priceHistory.getClose();
-        double priceT_1 = priceHistories.get(i - 1).getClose();
-        double simpleReturn = (priceT - priceT_1) / priceT_1;
-        double grossReturn = 1 + simpleReturn;
-        double logReturn = Math.log(grossReturn);
-        cumulativeLog = cumulativeLog * (1 + logReturn);
-        priceHistory.setSimpleReturn(simpleReturn * 100);
-        priceHistory.setGrossReturn(grossReturn * 100);
-        priceHistory.setLogReturn(logReturn * 100);
-        priceHistory.setCumulativeLog(cumulativeLog);
-        return cumulativeLog;
-    }
-
-    public static double calculateSD(List<Double> numArray, int i) {
-        double sum = 0.0, standardDeviation = 0.0;
-        int length = DAY;
-        for (int j = 0; j < DAY; j++) {
-            sum += numArray.get(j + i);
+        List<PriceHistory> returnPrices =  calculatePriceList.stream().map(c -> c.getPriceHistory()).collect(Collectors.toList());
+        if (returnPrices.size()<DAY){
+            return returnPrices;
         }
-        double mean = sum / length;
-        for (int j = 0; j < DAY; j++) {
-            standardDeviation += Math.pow(numArray.get(j + i) - mean, 2);
-        }
-        return Math.sqrt(standardDeviation / length);
+        return returnPrices.subList(DAY,returnPrices.size()-1);
     }
 
 
@@ -161,32 +134,32 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
 
     private Predicate conditionPriceRe(PriceHistoryRequest priceRe, String sym) {
         BooleanBuilder condition = new BooleanBuilder();
-
+        if (priceRe.getDay()==0){
+         priceRe.setDay(30);
+        }
         if (!StringUtils.isEmpty(priceRe.getSymbol())) {
             condition.and(Q_Price.sym.eq(sym));
         }
         if (priceRe.getFromTime() != null)
-            condition.and(Q_Price.time.after(priceRe.getFromTime()));
+            condition.and(Q_Price.time.after(priceRe.getFromTime().minusDays(priceRe.getDay()+10)));
         if (priceRe.getToTime() != null)
             condition.and(Q_Price.time.before(priceRe.getToTime()));
         return condition;
     }
 
     @Override
-    public List<PriceHistory> loadTest(PriceHistoryRequest priceHistoryRequest) {
-        DAY = priceHistoryRequest.getDay();
+    public List<PriceHistory> loadTest(PriceHistoryRequest request) {
         List<PriceHistory> priceHistories = new ArrayList<>();
-        for (String symbol : priceHistoryRequest.getSymbol()) {
+        for (String symbol : request.getSymbol()) {
 
             List<PriceHistory> priceHistoryList = new ArrayList<>();
-            List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest, symbol));
+            List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(request, symbol));
             for (int i = 0; i < priceHistories1.size(); i++) {
-                if (i % priceHistoryRequest.getReDay() == 0) {
+                if (i % request.getReDay() == 0) {
                     priceHistoryList.add(priceHistories1.get(i));
                 }
             }
-
-            List<PriceHistory> abc = priceSimplePriceSymbol(priceHistoryList, priceHistoryRequest.getMoney(), priceHistoryRequest.getRisk());
+            List<PriceHistory> abc = priceSimplePriceSymbol(priceHistoryList, request.getMoney(), request.getRisk(),request.isAllData());
             priceHistories.addAll(abc);
             for (PriceHistory priceHistory1 : abc) {
                 PriceHistory priceHistory = new PriceHistory();
@@ -217,13 +190,15 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
 
             List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest, symbol));
             if (ObjectUtils.isEmpty(priceHistories1)) continue;
-
+            List<PriceHistory> dataSave = new ArrayList<>();
             double cumulativeLog = 1;
             for (int i = 1; i < priceHistories1.size(); i++) {
-                cumulativeLog = coreCalculatePrice(priceHistories1, cumulativeLog, i);
+                CoreCalculatePrice calculatePrice = new CoreCalculatePrice(priceHistories.get(i-1),priceHistories.get(i),NORMAL_DAY);
+                cumulativeLog = calculatePrice.getCumulativeLogReturn();
+                dataSave.add(calculatePrice.getPriceHistory());
             }
-            priceHistoryRepository.saveAll(priceHistories1);
-            priceHistories.addAll(priceHistories1);
+            priceHistoryRepository.saveAll(dataSave);
+            priceHistories.addAll(dataSave);
         }
         return priceHistories;
     }
@@ -285,5 +260,47 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     public List<PriceHistory> groupCommon() {
         List<String> stocks = STOCK_MAPS.get("COMMON");
         return priceLast(null, null, stocks);
+    }
+
+    @Override
+    public List<NormalStrategyResponse> normalStrategy(PriceHistoryRequest request) {
+        double totalPercent = request.getPercent().stream().reduce(0D,Double::sum);
+        if (request.getPercent().stream().reduce(0D,Double::sum)!=1D){
+            throw  new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+        List<NormalStrategyResponse> responses = new ArrayList<>();
+        Map<LocalDate, Long[]> money = new TreeMap<>();
+        long hasUse = request.getMoney();
+        for (int i =0;i<request.getSymbol().size();i++) {
+            List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(request, request.getSymbol().get(i)));
+            if (ObjectUtils.isEmpty(priceHistories1)){
+                return null;
+            }
+            int numStocks = (int) ((request.getMoney() * request.getPercent().get(i))/(priceHistories1.get(0).getClose()*1000));
+            hasUse -= (long) (numStocks * priceHistories1.get(0).getClose()*1000);
+            for (PriceHistory priceHistory:priceHistories1){
+                NormalStrategyResponse normal = new NormalStrategyResponse();
+                normal.setTime(priceHistory.getTime());
+                normal.setSymbol(request.getSymbol().get(i));
+                normal.setMoney((long) (numStocks*priceHistory.getClose()*1000));
+                responses.add(normal);
+                if (money.containsKey(normal.getTime())){
+                    long moneyTime = money.get(normal.getTime())[0]+normal.getMoney();
+                    long moneyNotUse = money.get(normal.getTime())[1]-normal.getMoney();
+                    money.put(normal.getTime(),new Long[]{moneyTime,moneyNotUse});
+                }else {
+                    long moneyNotUse = request.getMoney()-normal.getMoney();
+                    money.put(normal.getTime(),new Long[]{normal.getMoney(),moneyNotUse});
+                }
+            }
+        }
+        for (Map.Entry<LocalDate,Long[]> data: money.entrySet()){
+            NormalStrategyResponse normal = new NormalStrategyResponse();
+            normal.setSymbol("Money");
+            normal.setTime(data.getKey());
+            normal.setMoney(data.getValue()[0]+(hasUse));
+            responses.add(normal);
+        }
+        return responses.stream().filter(s -> s.getSymbol().equals("Money")).collect(Collectors.toList());
     }
 }

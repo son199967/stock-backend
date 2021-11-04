@@ -8,8 +8,10 @@ import java.util.List;
 @Data
 public class PriceHistoryRequest {
     private List<String> symbol;
+    private List<Double> percent;
     private int day;
     private int reDay;
+    private boolean isAllData;
     private long money;
     private double risk;
     @JsonProperty("from_time")
