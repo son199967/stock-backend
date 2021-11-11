@@ -2,10 +2,11 @@ package vn.com.hust.stock.stockapp.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Configuration
+@Component
 public class GroupsStock {
 
 
@@ -32,12 +33,11 @@ public class GroupsStock {
 
     }
 
-    @Bean
-     Map<String, List<String>> STOCK_MAPS(){
+    public Map<String, List<String>> STOCK_MAPS(){
+
         return STOCK_MAP;
     }
-    @Bean
-     List<String> STOCK_ARRAYS(){
+     public List<String> STOCK_ARRAYS(){
         return STOCK_ARRAYS;
     }
 }

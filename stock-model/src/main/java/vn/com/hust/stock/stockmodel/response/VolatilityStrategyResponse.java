@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 public class VolatilityStrategyResponse {
     private LocalDate time;
+    private long totalMoney;
     private long money;
     private long cash;
     private long remainMoney;

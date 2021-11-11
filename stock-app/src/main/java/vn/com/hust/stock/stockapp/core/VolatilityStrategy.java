@@ -22,6 +22,7 @@ public class VolatilityStrategy {
     public List<VolatilityStrategyResponse> volatilityStrategyResponse() {
         List<VolatilityStrategyResponse> responses = new ArrayList<>();
         Map<String, Integer> asset = new HashMap<>();
+        Map<String,Double> priceLast = new HashMap<>();
         double cash = 0;
         boolean start = true;
         for (Map.Entry<LocalDate, List<CorePrice>> map : mapPrice.entrySet()) {
@@ -32,12 +33,24 @@ public class VolatilityStrategy {
             }, Double::sum);
             List<VolatilitySymbolsResponse> symbolsResponses = new ArrayList<>();
             if (start==false) {
-                money = (long) (map.getValue().stream().reduce(0D, (s, l) -> {
-                    if (!asset.containsKey(l.getPriceHistory().getSym())) return 0D;
-                    return s + asset.get(l.getPriceHistory().getSym()) * l.getPriceHistory().getClose();
-                }, Double::sum).doubleValue() + cash);
+                for (Map.Entry<String,Integer> assetData : asset.entrySet()){
+                    boolean check = false;
+                   for (CorePrice corePrice : map.getValue()){
+                       if (assetData.getKey().equals(corePrice.getPriceHistory().getSym())){
+                           money = (long) (corePrice.getPriceHistory().getClose()*1000)* assetData.getValue();
+                           check = true;
+                           break;
+                       }
+                   }
+                   if (check == false)
+                   money  += priceLast.get(assetData.getKey())*1000*assetData.getValue();
+                }
+
+                money +=  cash;
             }
-            start= false;
+            volatilityStrategy.setTotalMoney(money);
+            if (responses.size() == 200)
+                System.out.println("jshd");
             map.getValue().forEach(m -> {
                 VolatilitySymbolsResponse volatility = new VolatilitySymbolsResponse();
                 volatility.setSymbols(m.getPriceHistory().getSym());
@@ -49,7 +62,9 @@ public class VolatilityStrategy {
                 volatility.setMoney((long) volatility.getNumberOfSharesWithEquity());
                 symbolsResponses.add(volatility);
                 asset.put(volatility.getSymbols(), stockHold);
+                priceLast.put(volatility.getSymbols(),m.getPriceHistory().getClose());
             });
+            if (!asset.isEmpty()) start= false;
             double totalMoney = symbolsResponses.stream().reduce(0D, (s, e) -> {
                 return s + e.getMoney();
             }, Double::sum);

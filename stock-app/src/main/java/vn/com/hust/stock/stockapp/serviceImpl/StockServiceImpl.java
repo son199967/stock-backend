@@ -4,11 +4,9 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import vn.com.hust.stock.stockapp.repository.StockRepository;
-import vn.com.hust.stock.stockapp.service.StockInfoService;
 import vn.com.hust.stock.stockapp.service.StockPriceService;
 import vn.com.hust.stock.stockapp.service.StockService;
 import vn.com.hust.stock.stockmodel.entity.*;
@@ -145,13 +143,9 @@ public class StockServiceImpl implements StockService {
         if (!StringUtils.isEmpty(stockRequest.getName())) {
             condition.and(Q_STOCK.nameCompany.like("%"+stockRequest.getName()+"%"));
         }
-        if (!StringUtils.isEmpty(stockRequest.getGroupCompany())) {
+        if (stockRequest.getGroupCompany()!=null) {
             condition.and(Q_STOCK.groupCompany.eq(stockRequest.getGroupCompany()));
         }
-        if (stockRequest.getPriceFrom() != 0)
-            condition.and(Q_STOCK.price.lt(stockRequest.getPriceFrom()));
-        if (stockRequest.getPriceFrom() != 0)
-            condition.and(Q_STOCK.price.gt(stockRequest.getPriceTo()));
         return condition;
     }
 }

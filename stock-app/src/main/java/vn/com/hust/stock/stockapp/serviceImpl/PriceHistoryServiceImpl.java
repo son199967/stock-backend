@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import vn.com.hust.stock.stockapp.config.GroupsStock;
 import vn.com.hust.stock.stockapp.core.CorePrice;
 import vn.com.hust.stock.stockapp.core.VolatilityStrategy;
 import vn.com.hust.stock.stockapp.repository.PriceHistoryRepository;
@@ -38,10 +39,10 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     private static final QPriceHistory Q_Price = QPriceHistory.priceHistory;
 
 
-    @Autowired
-    private Map<String, List<String>> STOCK_MAPS;
 
-    @Autowired
+    private GroupsStock groupsStock;
+
+    private Map<String, List<String>> STOCK_MAPS;
     private List<String> STOCK_ARRAYS;
 
     private final int NORMAL_DAY = 30;
@@ -52,8 +53,11 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     private EntityManager em;
 
     @Autowired
-    public PriceHistoryServiceImpl(PriceHistoryRepository priceHistoryRepository) {
+    public PriceHistoryServiceImpl(PriceHistoryRepository priceHistoryRepository,GroupsStock groupsStock) {
         this.priceHistoryRepository = priceHistoryRepository;
+        groupsStock = groupsStock;
+        STOCK_ARRAYS = groupsStock.STOCK_ARRAYS();
+        STOCK_MAPS = groupsStock.STOCK_MAPS();
     }
 
     @Override
@@ -76,6 +80,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
 
     @Override
     public List<PriceHistory> calculateSimplePrice(PriceHistoryRequest request) {
+        request.setAllData(true);
         List<PriceHistory> priceHistories = new ArrayList<>();
         LocalDate fromTime = request.getFromTime();
         if (request.getReDay() == 0) {
@@ -92,7 +97,11 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
             List<PriceHistory> abc = priceSimplePriceSymbol(priceHistoryList, request.getMoney(), request.getRisk(), request.isAllData(), request.getDay());
             priceHistories.addAll(abc);
         }
-        return priceHistories.stream().filter(s -> s.getSimpleReturn() != 0 && s.getVolatility() != 0)
+        if (request.isAllData()){
+            return priceHistories.stream().filter(s -> s.getSimpleReturn() != 0 && s.getVolatility() != 0)
+                    .sorted(Comparator.comparing(PriceHistory::getTime)).collect(Collectors.toList());
+        }
+        return priceHistories.stream().filter(s -> s.getSimpleReturn() != 0 )
                 .sorted(Comparator.comparing(PriceHistory::getTime)).collect(Collectors.toList());
 
     }
@@ -279,13 +288,13 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     @Override
     public List<PriceHistory> groupHistogram() {
         List<String> stocks = STOCK_MAPS.get("GROUPS");
-        return priceLast(null, null, stocks);
+        return priceLast("simple", "asc", stocks);
     }
 
     @Override
     public List<PriceHistory> groupCommon() {
         List<String> stocks = STOCK_MAPS.get("COMMON");
-        return priceLast(null, null, stocks);
+        return priceLast("simple", "asc", stocks);
     }
 
     @Override
