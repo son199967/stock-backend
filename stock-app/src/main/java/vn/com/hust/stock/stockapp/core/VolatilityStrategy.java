@@ -28,6 +28,8 @@ public class VolatilityStrategy {
         for (Map.Entry<LocalDate, List<CorePrice>> map : mapPrice.entrySet()) {
             VolatilityStrategyResponse volatilityStrategy = new VolatilityStrategyResponse();
             volatilityStrategy.setTime(map.getKey());
+            long moneyStart = money;
+            money =0;
             double totalTargetWeight = map.getValue().stream().reduce(0D, (s, e) -> {
                 return s + e.getTargetWeight();
             }, Double::sum);
@@ -37,7 +39,7 @@ public class VolatilityStrategy {
                     boolean check = false;
                    for (CorePrice corePrice : map.getValue()){
                        if (assetData.getKey().equals(corePrice.getPriceHistory().getSym())){
-                           money = (long) (corePrice.getPriceHistory().getClose()*1000)* assetData.getValue();
+                           money += (long) (corePrice.getPriceHistory().getClose()*1000)* assetData.getValue();
                            check = true;
                            break;
                        }
@@ -45,12 +47,10 @@ public class VolatilityStrategy {
                    if (check == false)
                    money  += priceLast.get(assetData.getKey())*1000*assetData.getValue();
                 }
-
                 money +=  cash;
             }
             volatilityStrategy.setTotalMoney(money);
-            if (responses.size() == 200)
-                System.out.println("jshd");
+            if (money==0) money = moneyStart;
             map.getValue().forEach(m -> {
                 VolatilitySymbolsResponse volatility = new VolatilitySymbolsResponse();
                 volatility.setSymbols(m.getPriceHistory().getSym());
@@ -58,7 +58,9 @@ public class VolatilityStrategy {
                 volatility.setTargetWight(m.getTargetWeight());
                 volatility.setConstrainedWeightsLeverage(totalTargetWeight < 1 ? volatility.getTargetWight() : volatility.getTargetWight() / totalTargetWeight);
                 volatility.setNumberOfSharesWithEquity(money * volatility.getConstrainedWeightsLeverage());
-                int stockHold = (int) ((money * volatility.getTargetWight()) / (m.getPriceHistory().getClose() * 1000));
+                int stockHold = (int) ((volatility.getNumberOfSharesWithEquity()) / (m.getPriceHistory().getClose() * 1000));
+                volatility.setStockHold(stockHold);
+                volatility.setPrice(m.getPriceHistory().getClose()*1000);
                 volatility.setMoney((long) volatility.getNumberOfSharesWithEquity());
                 symbolsResponses.add(volatility);
                 asset.put(volatility.getSymbols(), stockHold);

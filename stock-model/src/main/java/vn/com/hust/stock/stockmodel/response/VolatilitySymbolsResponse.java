@@ -6,6 +6,8 @@ import lombok.Data;
 public class VolatilitySymbolsResponse {
     private String symbols;
     private long money;
+    private int stockHold;
+    private double price;
     private long remainMoney;
     private double simpleReturn;
     private double targetWight;

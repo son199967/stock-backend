@@ -87,13 +87,20 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
             request.setReDay(RE_DAY);
         }
         for (String symbol : request.getSymbol()) {
-            List<PriceHistory> priceHistoryList = new ArrayList<>();
+            List<PriceHistory> priceHistoryListRe = new ArrayList<>();
             List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(request, symbol));
             for (int i = 0; i < priceHistories1.size(); i++) {
                 if (i % request.getReDay() == 0) {
-                    priceHistoryList.add(priceHistories1.get(i));
+                    priceHistoryListRe.add(priceHistories1.get(i));
                 }
             }
+            PriceHistory priceHistory = priceHistoryListRe.stream().filter(p -> p.getTime().isAfter(request.getFromTime())).collect(Collectors.toList()).get(0);
+            int indexOf = priceHistoryListRe.indexOf(priceHistory);
+            int startList = 0;
+            if (indexOf>request.getDay()){
+                startList = indexOf -request.getDay();
+            }
+            List<PriceHistory> priceHistoryList = priceHistoryListRe.subList(startList,priceHistoryListRe.size());
             List<PriceHistory> abc = priceSimplePriceSymbol(priceHistoryList, request.getMoney(), request.getRisk(), request.isAllData(), request.getDay());
             priceHistories.addAll(abc);
         }
@@ -146,13 +153,13 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     private Predicate conditionPriceRe(PriceHistoryRequest priceRe, String sym) {
         BooleanBuilder condition = new BooleanBuilder();
         if (priceRe.getDay() == 0) {
-            priceRe.setDay(30);
+            priceRe.setDay(1000);
         }
         if (!StringUtils.isEmpty(priceRe.getSymbol())) {
             condition.and(Q_Price.sym.eq(sym));
         }
         if (priceRe.getFromTime() != null)
-            condition.and(Q_Price.time.after(priceRe.getFromTime().minusDays(priceRe.getDay() + 10)));
+            condition.and(Q_Price.time.after(priceRe.getFromTime().minusDays(priceRe.getDay() )));
         if (priceRe.getToTime() != null)
             condition.and(Q_Price.time.before(priceRe.getToTime()));
         return condition;
