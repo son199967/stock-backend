@@ -31,8 +31,6 @@ public class GroupStockUserServiceImpl implements GroupStockUserService {
         this.groupStockUserRepository = groupStockUserRepository;
     }
 
-
-
     @Override
     public List<GroupStockUserResponse> getGroupPriceByUser(HttpServletRequest request) {
         User user = userService.whoami(request);

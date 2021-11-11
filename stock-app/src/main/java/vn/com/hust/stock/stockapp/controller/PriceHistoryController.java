@@ -79,4 +79,5 @@ public class PriceHistoryController {
         return priceHistoryService.groupCommon();
     }
 
+
 }
