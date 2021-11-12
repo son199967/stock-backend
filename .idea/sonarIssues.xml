@@ -353,6 +353,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/response/VolatilitySymbolsResponse.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/until/StringArraysConverter.java">
           <value>
             <set />

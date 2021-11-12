@@ -30,9 +30,7 @@ public class VolatilityStrategy {
             volatilityStrategy.setTime(map.getKey());
             long moneyStart = money;
             money =0;
-            double totalTargetWeight = map.getValue().stream().reduce(0D, (s, e) -> {
-                return s + e.getTargetWeight();
-            }, Double::sum);
+            double totalTargetWeight = map.getValue().stream().reduce(0D, (s, e) -> s + e.getTargetWeight(), Double::sum);
             List<VolatilitySymbolsResponse> symbolsResponses = new ArrayList<>();
             if (start==false) {
                 for (Map.Entry<String,Integer> assetData : asset.entrySet()){
@@ -67,15 +65,12 @@ public class VolatilityStrategy {
                 priceLast.put(volatility.getSymbols(),m.getPriceHistory().getClose());
             });
             if (!asset.isEmpty()) start= false;
-            double totalMoney = symbolsResponses.stream().reduce(0D, (s, e) -> {
-                return s + e.getMoney();
-            }, Double::sum);
-            double constrainedWeightsLeverageTotal = symbolsResponses.stream().reduce(0D, (s, e) -> {
-                return s + e.getConstrainedWeightsLeverage();
-            }, Double::sum);
-            double numberOfSharesWithEquityTotal = symbolsResponses.stream().reduce(0D, (s, e) -> {
-                return s + e.getConstrainedWeightsLeverage();
-            }, Double::sum);
+            double totalMoney = 0D;
+            for(Map.Entry<String,Integer> holeStock: asset.entrySet()){
+                totalMoney += holeStock.getValue()* priceLast.get(holeStock.getKey())*1000;
+            }
+            double constrainedWeightsLeverageTotal = symbolsResponses.stream().reduce(0D, (s, e) -> s + e.getConstrainedWeightsLeverage(), Double::sum);
+            double numberOfSharesWithEquityTotal = symbolsResponses.stream().reduce(0D, (s, e) -> s + e.getConstrainedWeightsLeverage(), Double::sum);
             volatilityStrategy.setCash(money - (long) totalMoney);
             cash = volatilityStrategy.getCash();
             volatilityStrategy.setMoney((long) totalMoney);
