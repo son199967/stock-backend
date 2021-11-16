@@ -345,4 +345,71 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         }
         return responses.stream().filter(s -> s.getSymbol().equals("Money")).collect(Collectors.toList());
     }
+
+    @Override
+    public List<Map<String, Double>> indexGroup(String sym) {
+        Map<String,Double> map = new HashMap<>();
+        Map<String,Double> mapRisk = new HashMap<>();
+        int year = LocalDate.now().getYear();
+        LocalDate returnYear = LocalDate.of(year,1,1);
+        LocalDate returnBeforeYear= LocalDate.of(year-1,1,1);
+        LocalDate return1BeforeYear = LocalDate.of(year,1,1);
+        LocalDate return3BeforeMonth = LocalDate.now().minusMonths(3);
+        LocalDate return1BeforeMonth = LocalDate.now().minusMonths(1);
+
+
+        PriceHistoryRequest priceHistoryRequest = new PriceHistoryRequest();
+        priceHistoryRequest.setSymbol(new ArrayList<>(Arrays.asList(sym)));
+        priceHistoryRequest.setFromTime(return1BeforeYear);
+        List<PriceHistory> priceHistories = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest, sym));
+
+        Double maxBeforeReturnYear = priceHistories.stream().max(Comparator.comparing(PriceHistory::getSimpleReturn))
+                .orElseThrow(()->new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR)).getSimpleReturn();
+        Double minBeforeReturnYear = priceHistories.stream().min(Comparator.comparing(PriceHistory::getSimpleReturn))
+                .orElseThrow(()->new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR)).getSimpleReturn();
+        Double avgBeforeReturnYear = priceHistories.stream().mapToDouble(PriceHistory::getSimpleReturn).average().getAsDouble();
+
+        Double maxReturnYear = priceHistories.stream().filter(p->p.getTime().isAfter(returnYear)).max(Comparator.comparing(PriceHistory::getSimpleReturn))
+                .orElseThrow(()->new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR)).getSimpleReturn();
+        Double minReturnYear = priceHistories.stream().filter(p->p.getTime().isAfter(returnYear)).min(Comparator.comparing(PriceHistory::getSimpleReturn))
+                .orElseThrow(()->new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR)).getSimpleReturn();
+        Double avgReturnYear = priceHistories.stream().filter(p->p.getTime().isAfter(returnYear)).mapToDouble(PriceHistory::getSimpleReturn).average().getAsDouble();
+
+        Double maxReturn3Month = priceHistories.stream().filter(p->p.getTime().isAfter(return3BeforeMonth)).max(Comparator.comparing(PriceHistory::getSimpleReturn))
+                .orElseThrow(()->new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR)).getSimpleReturn();
+        Double minReturn3Month = priceHistories.stream().filter(p->p.getTime().isAfter(return3BeforeMonth)).min(Comparator.comparing(PriceHistory::getSimpleReturn))
+                .orElseThrow(()->new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR)).getSimpleReturn();
+        Double avgReturn3Month = priceHistories.stream().filter(p->p.getTime().isAfter(return3BeforeMonth)).mapToDouble(PriceHistory::getSimpleReturn).average().getAsDouble();
+
+        Double maxReturn1Month = priceHistories.stream().filter(p->p.getTime().isAfter(return1BeforeMonth)).max(Comparator.comparing(PriceHistory::getSimpleReturn))
+                .orElseThrow(()->new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR)).getSimpleReturn();
+        Double minReturn1Month = priceHistories.stream().filter(p->p.getTime().isAfter(return1BeforeMonth)).min(Comparator.comparing(PriceHistory::getSimpleReturn))
+                .orElseThrow(()->new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR)).getSimpleReturn();
+        Double avgReturn1Month = priceHistories.stream().filter(p->p.getTime().isAfter(return1BeforeMonth)).mapToDouble(PriceHistory::getSimpleReturn).average().getAsDouble();
+
+        List<PriceHistory> priceHistoryList =  priceSimplePriceSymbol(priceHistories,10000000,0.15,true,30);
+
+
+
+        map.put("Avg "+year+ " Return (%)",avgReturnYear);
+        map.put("Avg "+(year-1)+ " Return (%)",avgBeforeReturnYear);
+        map.put("Avg Last 3 Months (%)",avgReturn3Month);
+        map.put("Avg Last 1 Months (%)",avgReturnYear);
+        map.put("Best Monthly Return (%)",maxReturn1Month);
+        map.put("Worst Monthly Return (%)",minReturn1Month);
+        map.put("Best "+year+" Return (%)",maxReturnYear);
+        map.put("Worst "+year+" Return (%)",minReturnYear);
+        map.put("Best+"+(year-1)+"+ Return (%)",maxBeforeReturnYear);
+        map.put("Worst+"+(year-1)+"+Year Return (%)",minBeforeReturnYear);
+        PriceHistory last = priceHistoryList.get(priceHistoryList.size()-1);
+        mapRisk.put("Annualised Standard Deviation (%)",last.getAnnualisedStandardDeviation());
+        mapRisk.put("Volatility (%)",last.getVolatility());
+        mapRisk.put("Sharpe Ratio (%)",last.getSharpe());
+        mapRisk.put("Simple Return",last.getSimpleReturn());
+        mapRisk.put("Log Return",last.getLogReturn());
+        mapRisk.put("Gross Return",last.getGrossReturn());
+        mapRisk.put("Cumulative Log",last.getCumulativeLog());
+
+        return new ArrayList<>(Arrays.asList(map,mapRisk));
+    }
 }

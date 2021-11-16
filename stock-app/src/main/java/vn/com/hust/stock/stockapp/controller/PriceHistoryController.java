@@ -78,6 +78,11 @@ public class PriceHistoryController {
     {
         return priceHistoryService.groupCommon();
     }
+    @GetMapping("/indexGroup")
+    public List<Map<String,Double>> indexGroup(@RequestParam String sym)
+    {
+        return priceHistoryService.indexGroup(sym);
+    }
 
 
 }

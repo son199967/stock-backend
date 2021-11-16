@@ -21,7 +21,7 @@ public interface PriceHistoryService {
     List<PriceHistory> histogram(String field , String order);
     List<PriceHistory> groupHistogram();
     List<PriceHistory> groupCommon();
-
+    List<Map<String, Double>> indexGroup(String sym);
     List<PriceHistory> updateData();
 
 }

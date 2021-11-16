@@ -52,7 +52,7 @@ public class CorePrice {
             money = (int) (stockHold * priceHistory.getClose() * 1000 + cash);
         }
         priceHistory.setVolatility(setVolatility);
-        priceHistory.setSharpe(setVolatility/simpleReturnDay_BeforeDay.stream().mapToDouble(s->s).average().getAsDouble());
+        priceHistory.setSharpe(simpleReturnDay_BeforeDay.stream().mapToDouble(s->s).average().getAsDouble()/setVolatility);
         priceHistory.setAnnualisedStandardDeviation(setVolatility / 100);
         if ((risk * 100) > setVolatility) risk = setVolatility / 100;
         priceHistory.setTargetWeights(risk / (setVolatility / 100));
