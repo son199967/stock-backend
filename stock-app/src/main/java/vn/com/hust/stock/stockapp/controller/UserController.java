@@ -3,6 +3,7 @@ package vn.com.hust.stock.stockapp.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import io.swagger.annotations.Authorization;
 import org.modelmapper.ModelMapper;
 import vn.com.hust.stock.stockapp.service.UserService;
 import vn.com.hust.stock.stockmodel.login.LoginRequest;
+import vn.com.hust.stock.stockmodel.user.Role;
 import vn.com.hust.stock.stockmodel.user.User;
 import vn.com.hust.stock.stockmodel.user.UserDataDTO;
 import vn.com.hust.stock.stockmodel.user.UserResponseDTO;
@@ -54,6 +56,34 @@ public class UserController {
         return userService.signup(modelMapper.map(user, User.class));
     }
 
+
+    @PostMapping("/resetPass")
+    public User resetPass(@ApiParam("Signup User") @RequestBody UserDataDTO user,HttpServletRequest request) {
+        return userService.resetPass(user,request);
+    }
+
+
+    @PostMapping("/approve/{id}/{role}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public User approveUser(@PathVariable int id, @PathVariable Role role) {
+        return userService.approve(id,role);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Page<User> approveUser(@RequestParam int page, @RequestParam int size) {
+        return userService.getAllUser(page,size);
+    }
+
+
+    @PutMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT') or hasRole('ROLE_MEMBER')")
+    @ApiOperation(value = "${UserController.me}", response = UserResponseDTO.class, authorizations = {
+            @Authorization(value="apiKey") })
+    public User updateUserInfo(@RequestBody UserDataDTO user,HttpServletRequest request) {
+        return userService.updateUser(user,request);
+    }
+
     @DeleteMapping(value = "/{username}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiOperation(value = "${UserController.delete}", authorizations = { @Authorization(value="apiKey") })
@@ -80,8 +110,9 @@ public class UserController {
     }
 
     @GetMapping(value = "/me")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
-    @ApiOperation(value = "${UserController.me}", response = UserResponseDTO.class, authorizations = { @Authorization(value="apiKey") })
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT') or hasRole('ROLE_MEMBER')")
+    @ApiOperation(value = "${UserController.me}", response = UserResponseDTO.class, authorizations = {
+            @Authorization(value="apiKey") })
     @ApiResponses(value = {//
             @ApiResponse(code = 400, message = "Something went wrong"), //
             @ApiResponse(code = 403, message = "Access denied"), //
@@ -89,6 +120,7 @@ public class UserController {
     public UserResponseDTO whoami(HttpServletRequest req) {
         return modelMapper.map(userService.whoami(req), UserResponseDTO.class);
     }
+
 
     @GetMapping("/refresh")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")

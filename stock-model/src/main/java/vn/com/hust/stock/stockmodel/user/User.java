@@ -22,13 +22,58 @@ public class User {
     @Size(min = 8, message = "Minimum password length: 8 characters")
     private String password;
 
+    @Column
+    private String fullName;
+
+    @Column
+    private String profession;
+
+    @Column
+    private String investment;
+
+    @Column
+    private String strategy;
+
+    @Column
+    private String telephone;
+
     @ElementCollection(fetch = FetchType.EAGER)
     List<Role> roles;
     @OneToMany(mappedBy = "user",cascade = CascadeType.MERGE)
     List<GroupsStockHold> groupsStockHolds;
 
 
+    public String getFullName() {
+        return fullName;
+    }
 
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getProfession() {
+        return profession;
+    }
+
+    public void setProfession(String profession) {
+        this.profession = profession;
+    }
+
+    public String getInvestment() {
+        return investment;
+    }
+
+    public void setInvestment(String investment) {
+        this.investment = investment;
+    }
+
+    public String getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(String strategy) {
+        this.strategy = strategy;
+    }
 
     public Integer getId() {
         return id;
@@ -72,6 +117,15 @@ public class User {
 
     public List<GroupsStockHold> getGroupsStockHolds() {
         return groupsStockHolds;
+    }
+
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
 
     public void setGroupsStockHolds(List<GroupsStockHold> groupsStockHolds) {

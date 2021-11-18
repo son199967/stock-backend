@@ -310,29 +310,34 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         if (request.getPercent().stream().reduce(0D, Double::sum) != 1D) {
             throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
+        Map<String,Double> map = new HashMap<>();
+        for (int k=0;k<request.getSymbol().size();k++){
+            map.put(request.getSymbol().get(k),request.getPercent().get(k));
+        }
         List<NormalStrategyResponse> responses = new ArrayList<>();
         Map<LocalDate, Long[]> money = new TreeMap<>();
-        long hasUse = request.getMoney();
+        long moneyDevice = request.getMoney();
         for (int i = 0; i < request.getSymbol().size(); i++) {
-            List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(request, request.getSymbol().get(i)));
+            List<PriceHistory> priceHistories1 =
+                    queryPolicyJoinProduct(conditionPriceRe(request, request.getSymbol().get(i)))
+                    .stream().filter(s-> s.getTime().isAfter(request.getFromTime())).collect(Collectors.toList());
             if (ObjectUtils.isEmpty(priceHistories1)) {
                 return null;
             }
             int numStocks = (int) ((request.getMoney() * request.getPercent().get(i)) / (priceHistories1.get(0).getClose() * 1000));
-            hasUse -= (long) (numStocks * priceHistories1.get(0).getClose() * 1000);
+            moneyDevice -= request.getMoney()*request.getPercent().get(i);
+            log.info("stock {}, percent {},start price 1 {} , to price {}",request.getSymbol().get(i),
+                    request.getPercent().get(i),
+                    priceHistories1.get(0).getClose(),
+                    priceHistories1.get(priceHistories1.size()-1).getClose());
             for (PriceHistory priceHistory : priceHistories1) {
-                NormalStrategyResponse normal = new NormalStrategyResponse();
-                normal.setTime(priceHistory.getTime());
-                normal.setSymbol(request.getSymbol().get(i));
-                normal.setMoney((long) (numStocks * priceHistory.getClose() * 1000));
-                responses.add(normal);
-                if (money.containsKey(normal.getTime())) {
-                    long moneyTime = money.get(normal.getTime())[0] + normal.getMoney();
-                    long moneyNotUse = money.get(normal.getTime())[1] - normal.getMoney();
-                    money.put(normal.getTime(), new Long[]{moneyTime, moneyNotUse});
+                 long nowMoney = (long) (numStocks * priceHistory.getClose() * 1000);
+                if (money.containsKey(priceHistory.getTime())) {
+                    long moneyTime = money.get(priceHistory.getTime())[0] + nowMoney;
+                    long moneyNotUse = money.get(priceHistory.getTime())[1] - nowMoney;
+                    money.put(priceHistory.getTime(), new Long[]{moneyTime, moneyNotUse});
                 } else {
-                    long moneyNotUse = request.getMoney() - normal.getMoney();
-                    money.put(normal.getTime(), new Long[]{normal.getMoney(), moneyNotUse});
+                    money.put(priceHistory.getTime(), new Long[]{nowMoney, moneyDevice});
                 }
             }
         }
@@ -340,10 +345,10 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
             NormalStrategyResponse normal = new NormalStrategyResponse();
             normal.setSymbol("Money");
             normal.setTime(data.getKey());
-            normal.setMoney(data.getValue()[0] + (hasUse));
+            normal.setMoney(data.getValue()[0] + (data.getValue()[1]));
             responses.add(normal);
         }
-        return responses.stream().filter(s -> s.getSymbol().equals("Money")).collect(Collectors.toList());
+        return responses.stream().filter(s -> s.getSymbol().equals("Money") ).collect(Collectors.toList());
     }
 
     @Override

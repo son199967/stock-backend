@@ -1,7 +1,6 @@
 package vn.com.hust.stock.stockmodel.exception;
 
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 public class PermissionException extends RuntimeException{

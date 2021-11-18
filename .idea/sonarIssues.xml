@@ -168,6 +168,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/repository/UserRepository.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/sercurity/JwtTokenProvider.java">
           <value>
             <set />
@@ -368,6 +373,16 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/until/user/Role.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/until/user/User.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/user/GroupsStockHold.java">
           <value>
             <set />
@@ -378,12 +393,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/user/Role.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/user/StringArraysConverter.java">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/user/User.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/user/UserDataDTO.java">
           <value>
             <set />
           </value>
