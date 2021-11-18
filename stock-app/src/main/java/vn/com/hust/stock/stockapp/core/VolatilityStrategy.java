@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class VolatilityStrategy {
     private Map<LocalDate, List<CorePrice>> mapPrice;
@@ -47,15 +48,27 @@ public class VolatilityStrategy {
                 }
                 money +=  cash;
             }
+
+
             volatilityStrategy.setTotalMoney(money);
             if (money==0) money = moneyStart;
+            long moneyData = money;
+            List<String> syms = map.getValue().stream().map(c->c.getPriceHistory().getSym()).collect(Collectors.toList());
+
+            for (Map.Entry<String,Integer> m : asset.entrySet()){
+                if (!syms.contains(m.getKey())){
+                    moneyData -= m.getValue() * priceLast.get(m.getKey())*1000;
+                }
+            }
+
+            long finalMoneyData = moneyData;
             map.getValue().forEach(m -> {
                 VolatilitySymbolsResponse volatility = new VolatilitySymbolsResponse();
                 volatility.setSymbols(m.getPriceHistory().getSym());
                 volatility.setSimpleReturn(m.getPriceHistory().getSimpleReturn());
                 volatility.setTargetWight(m.getTargetWeight());
                 volatility.setConstrainedWeightsLeverage(totalTargetWeight < 1 ? volatility.getTargetWight() : volatility.getTargetWight() / totalTargetWeight);
-                volatility.setNumberOfSharesWithEquity(money * volatility.getConstrainedWeightsLeverage());
+                volatility.setNumberOfSharesWithEquity(finalMoneyData * volatility.getConstrainedWeightsLeverage());
                 int stockHold = (int) ((volatility.getNumberOfSharesWithEquity()) / (m.getPriceHistory().getClose() * 1000));
                 volatility.setStockHold(stockHold);
                 volatility.setPrice(m.getPriceHistory().getClose()*1000);
@@ -73,6 +86,8 @@ public class VolatilityStrategy {
             double numberOfSharesWithEquityTotal = symbolsResponses.stream().reduce(0D, (s, e) -> s + e.getConstrainedWeightsLeverage(), Double::sum);
             volatilityStrategy.setCash(money - (long) totalMoney);
             cash = volatilityStrategy.getCash();
+            if (cash<0)
+                System.out.println("786");
             volatilityStrategy.setMoney((long) totalMoney);
             volatilityStrategy.setRemainMoney(money - volatilityStrategy.getMoney());
             volatilityStrategy.setTargetWight(totalTargetWeight);
