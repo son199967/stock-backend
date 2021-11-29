@@ -15,5 +15,12 @@
       <jdbc-url>jdbc:mysql://localhost:3306/stockdb?allowPublicKeyRetrieval=true&amp;useSSL=false</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="stockdb@20.124.34.37" uuid="cbe15397-9b3d-4a01-86b1-d9b04d696de6">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://20.124.34.37:3306/stockdb</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

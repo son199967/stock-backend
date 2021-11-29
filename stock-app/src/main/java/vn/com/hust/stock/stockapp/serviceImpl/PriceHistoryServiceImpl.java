@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import vn.com.hust.stock.stockapp.Job.ImportDataProcess;
 import vn.com.hust.stock.stockapp.config.GroupsStock;
 import vn.com.hust.stock.stockapp.core.CorePrice;
 import vn.com.hust.stock.stockapp.core.VolatilityStrategy;
@@ -27,6 +28,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
@@ -55,8 +57,9 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     @Autowired
     public PriceHistoryServiceImpl(PriceHistoryRepository priceHistoryRepository,GroupsStock groupsStock) {
         this.priceHistoryRepository = priceHistoryRepository;
+        scheduledExecutor = Executors.newScheduledThreadPool(10);
         groupsStock = groupsStock;
-        STOCK_ARRAYS = groupsStock.STOCK_ARRAYS();
+        STOCK_ARRAYS = priceHistoryRepository.findSymGroup();
         STOCK_MAPS = groupsStock.STOCK_MAPS();
     }
 
@@ -169,18 +172,41 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     public List<VolatilityStrategyResponse> volatilityStrategy(PriceHistoryRequest request) {
         request.setReDay(request.getReDay()==0?RE_DAY:request.getReDay());
         Map<LocalDate,List<CorePrice>> map = new TreeMap<>();
+        Map<String,List<PriceHistory>> mapStock = new HashMap<>();
+        List<LocalDate> dateTrade = new ArrayList<>();
         List<CorePrice> priceHistories = new ArrayList<>();
+        String stockMaxTime = null;
+        int dateTradeMaxStock = 0;
         for (String symbol : request.getSymbol()) {
-            List<PriceHistory> priceHistoryList = new ArrayList<>();
-            List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(request, symbol));
-            for (int i = 0; i < priceHistories1.size(); i++) {
-                if (i % request.getReDay() == 0) {
-                    priceHistoryList.add(priceHistories1.get(i));
-                }
+            List<PriceHistory> priceHistories1 = new ArrayList<>();
+
+            List<PriceHistory> priceHistorieDatas =      priceHistoryRepository.findAllBySymOrderByTimeDesc(symbol);
+            int indexOfLocalDate = priceHistorieDatas.indexOf(priceHistorieDatas.stream().filter(p->p.getTime().isAfter(request.getFromTime()))
+                    .findFirst().orElseThrow(()->new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR)));
+            if (indexOfLocalDate-request.getDay()*request.getReDay()<0){
+                int day = indexOfLocalDate/request.getDay();
+                request.setDay(day);
             }
-            List<CorePrice> data = priceVolatility(priceHistoryList, request.getMoney(), request.getRisk(), request.getDay());
-            priceHistories.addAll(data);
+            priceHistories1 = priceHistorieDatas.subList(indexOfLocalDate-request.getDay()*request.getReDay(),priceHistorieDatas.size()-1);
+
+            if (dateTradeMaxStock <priceHistories1.size()) {
+                dateTradeMaxStock = priceHistories1.size();
+                stockMaxTime  = symbol;
+            }
+            mapStock.put(symbol,priceHistories1);
         }
+        List<PriceHistory> priceHistoriesMaxStock = mapStock.get(stockMaxTime);
+        for (int j=0;j<dateTradeMaxStock;j++){
+           if (j% request.getReDay()==0){
+              dateTrade.add(priceHistoriesMaxStock.get(j).getTime());
+           }
+        }
+       for (Map.Entry<String,List<PriceHistory>> price : mapStock.entrySet()){
+           List<PriceHistory> priceHistoryList = price.getValue().stream()
+                   .filter(p-> dateTrade.contains(p.getTime())).collect(Collectors.toList());
+           List<CorePrice> data = priceVolatility(priceHistoryList, request.getMoney(), request.getRisk(), request.getDay());
+           priceHistories.addAll(data);
+       }
         for (CorePrice c : priceHistories){
             if (map.containsKey(c.getPriceHistory().getTime())) {
                 map.get(c.getPriceHistory().getTime()).add(c);
@@ -192,8 +218,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         }
         VolatilityStrategy volatilityStrategy = new VolatilityStrategy(map,request.getMoney());
         List<VolatilityStrategyResponse> responses =  volatilityStrategy.volatilityStrategyResponse();
-        return responses.subList(request.getDay(),responses.size()-1);
-
+        return responses.stream().filter(s->s.getTime().isAfter(request.getFromTime())).collect(Collectors.toList());
     }
     public  List<CorePrice>  priceVolatility(List<PriceHistory> priceHistories, long money, double risk, int Day) {
         int DAY = Day == 0 ? NORMAL_DAY : Day;
@@ -223,26 +248,26 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
 
     @Override
     public List<PriceHistory> updateData() {
-        List<PriceHistory> priceHistories = new ArrayList<>();
 
-        for (String symbol : STOCK_ARRAYS) {
+        STOCK_ARRAYS.stream().sorted(Comparator.comparing(String::length).reversed()).forEach( symbol ->{
+           scheduledExecutor.execute(()-> startUpddateDataSymbol(symbol));
+        });
+        return null;
+    }
 
-            PriceHistoryRequest priceHistoryRequest = new PriceHistoryRequest();
-            priceHistoryRequest.setSymbol(new ArrayList<>(Arrays.asList(symbol)));
-
-            List<PriceHistory> priceHistories1 = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest, symbol));
-            if (ObjectUtils.isEmpty(priceHistories1)) continue;
-            List<PriceHistory> dataSave = new ArrayList<>();
-            double cumulativeLog = 1;
-            for (int i = 1; i < priceHistories1.size(); i++) {
-                CorePrice calculatePrice = new CorePrice(priceHistories.get(i - 1), priceHistories.get(i), NORMAL_DAY);
-                cumulativeLog = calculatePrice.getCumulativeLogReturn();
-                dataSave.add(calculatePrice.getPriceHistory());
-            }
-            priceHistoryRepository.saveAll(dataSave);
-            priceHistories.addAll(dataSave);
+    private void startUpddateDataSymbol(String symbol) {
+        log.info("Start update sym stock {}", symbol);
+        PriceHistoryRequest priceHistoryRequest = new PriceHistoryRequest();
+        priceHistoryRequest.setSymbol(new ArrayList<>(Arrays.asList(symbol)));
+        List<PriceHistory> priceHistories1 = priceHistoryRepository.findAllBySymOrderByTimeDesc(symbol);
+        if (ObjectUtils.isEmpty(priceHistories1)) return;
+        double cumulativeLog = 1;
+        for (int i = 1; i < priceHistories1.size(); i++) {
+            CorePrice calculatePrice = new CorePrice(priceHistories1.get(i - 1), priceHistories1.get(i), NORMAL_DAY);
+            cumulativeLog = calculatePrice.getCumulativeLogReturn();
+            priceHistoryRepository.save(calculatePrice.getPriceHistory());
         }
-        return priceHistories;
+        return;
     }
 
     @Override
@@ -359,14 +384,16 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         LocalDate returnYear = LocalDate.of(year,1,1);
         LocalDate returnBeforeYear= LocalDate.of(year-1,1,1);
         LocalDate return1BeforeYear = LocalDate.of(year,1,1);
-        LocalDate return3BeforeMonth = LocalDate.now().minusMonths(3);
-        LocalDate return1BeforeMonth = LocalDate.now().minusMonths(1);
+
 
 
         PriceHistoryRequest priceHistoryRequest = new PriceHistoryRequest();
         priceHistoryRequest.setSymbol(new ArrayList<>(Arrays.asList(sym)));
         priceHistoryRequest.setFromTime(return1BeforeYear);
         List<PriceHistory> priceHistories = queryPolicyJoinProduct(conditionPriceRe(priceHistoryRequest, sym));
+        LocalDate timeNow = priceHistories.get(priceHistories.size()-1).getTime();
+        LocalDate return3BeforeMonth = timeNow.minusMonths(3);
+        LocalDate return1BeforeMonth = timeNow.minusMonths(1);
 
         Double maxBeforeReturnYear = priceHistories.stream().max(Comparator.comparing(PriceHistory::getSimpleReturn))
                 .orElseThrow(()->new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR)).getSimpleReturn();
@@ -404,12 +431,12 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         map.put("Worst Monthly Return (%)",minReturn1Month);
         map.put("Best "+year+" Return (%)",maxReturnYear);
         map.put("Worst "+year+" Return (%)",minReturnYear);
-        map.put("Best+"+(year-1)+"+ Return (%)",maxBeforeReturnYear);
-        map.put("Worst+"+(year-1)+"+Year Return (%)",minBeforeReturnYear);
+        map.put("Best "+(year-1)+" Return (%)",maxBeforeReturnYear);
+        map.put("Worst "+(year-1)+" Year Return (%)",minBeforeReturnYear);
         PriceHistory last = priceHistoryList.get(priceHistoryList.size()-1);
         mapRisk.put("Annualised Standard Deviation (%)",last.getAnnualisedStandardDeviation());
         mapRisk.put("Volatility (%)",last.getVolatility());
-        mapRisk.put("Sharpe Ratio (%)",last.getSharpe());
+        mapRisk.put("Sharpe Ratio",last.getSharpe());
         mapRisk.put("Simple Return",last.getSimpleReturn());
         mapRisk.put("Log Return",last.getLogReturn());
         mapRisk.put("Gross Return",last.getGrossReturn());

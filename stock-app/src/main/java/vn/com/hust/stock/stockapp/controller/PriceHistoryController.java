@@ -13,6 +13,7 @@ import vn.com.hust.stock.stockmodel.response.VolatilityStrategyResponse;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledExecutorService;
 
 @RestController
@@ -78,6 +79,7 @@ public class PriceHistoryController {
     {
         return priceHistoryService.groupCommon();
     }
+
     @GetMapping("/indexGroup")
     public List<Map<String,Double>> indexGroup(@RequestParam String sym)
     {

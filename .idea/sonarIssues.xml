@@ -13,6 +13,16 @@
             <set />
           </value>
         </entry>
+        <entry key="$MAVEN_REPOSITORY$/org/springframework/spring-web/5.3.3/spring-web-5.3.3.jar!/org/springframework/web/method/support/InvocableHandlerMethod.class">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/logs/spring-boot-logger.log">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/pom.xml">
           <value>
             <set />
@@ -28,7 +38,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/Job/ImportDataProcess.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/Job/JobSchedule.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/config/AppConfig.java">
           <value>
             <set />
           </value>
@@ -204,6 +224,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/service/UserService.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/serviceImpl/DiskStorageProvider.java">
           <value>
             <set />
           </value>
@@ -413,7 +438,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/stock-model/src/main/java/vn/com/hust/stock/stockmodel/user/UserResponseDTO.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/stock-model/target/generated-sources/java/vn/com/hust/stock/stockmodel/entity/QStock.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$APPLICATION_CONFIG_DIR$/consoles/db/619b22b2-40a8-4bc0-9706-e49cc9d61400/console.sql">
           <value>
             <set />
           </value>
@@ -429,6 +464,16 @@
           </value>
         </entry>
         <entry key="$APPLICATION_CONFIG_DIR$/consoles/db/619b22b2-40a8-4bc0-9706-e49cc9d61400/console_3.sql">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$APPLICATION_CONFIG_DIR$/consoles/db/619b22b2-40a8-4bc0-9706-e49cc9d61400/console_4.sql">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$APPLICATION_CONFIG_DIR$/consoles/db/cbe15397-9b3d-4a01-86b1-d9b04d696de6/console_1.sql">
           <value>
             <set />
           </value>

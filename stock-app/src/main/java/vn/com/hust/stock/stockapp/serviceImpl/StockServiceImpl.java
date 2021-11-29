@@ -6,6 +6,8 @@ import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import vn.com.hust.stock.stockapp.Job.ImportDataProcess;
+import vn.com.hust.stock.stockapp.repository.PriceHistoryRepository;
 import vn.com.hust.stock.stockapp.repository.StockRepository;
 import vn.com.hust.stock.stockapp.service.StockPriceService;
 import vn.com.hust.stock.stockapp.service.StockService;
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
 public class StockServiceImpl implements StockService {
     private final StockRepository stockRepository;
     private final StockPriceService stockPriceService;
+    private  final ImportDataProcess importDataProcess;
+
 
     private List<String> vn100;
 
@@ -31,11 +35,16 @@ public class StockServiceImpl implements StockService {
     private static final QStockPrice Q_STOCK_PRICE = QStockPrice.stockPrice;
     private Map<String, List<String>> STOCK_MAP = new HashMap<>();
     private List<String> STOCK_ARRAYS = new ArrayList<>();
+    private PriceHistoryRepository priceHistoryRepository;
     @Autowired
     public StockServiceImpl(StockRepository stockRepository,
-                            StockPriceService stockPriceService) {
+                            StockPriceService stockPriceService,
+                            ImportDataProcess importDataProcess,
+                            PriceHistoryRepository priceHistoryRepository) {
         this.stockRepository = stockRepository;
+        this.importDataProcess = importDataProcess;
         this.stockPriceService = stockPriceService;
+        this.priceHistoryRepository = priceHistoryRepository;
         STOCK_MAP.put("BDS", Arrays.asList("VIC", "VHM", "VRE", "PRD", "KDH", "REE", "DXG", "HDG", "FLC", "ITA"));
         STOCK_MAP.put("CK", Arrays.asList("SSI", "VND", "VCI", "HCM", "MBS", "FTS", "SHS", "KLB", "AGR", "TVS"));
         STOCK_MAP.put("CONGNGHE", Arrays.asList("FPT", "FOX", "CMG", "SAM", "SGT", "ELC", "VEC", "ITD", "TTN", "CNC"));
@@ -114,9 +123,13 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public List<String> search(String sym) {
-          if (sym ==null)
-              return STOCK_ARRAYS;
-          return STOCK_ARRAYS.stream().filter(s -> s.startsWith(sym)).collect(Collectors.toList());
+        List<String> symStocks = priceHistoryRepository.findSymGroup();
+        return symStocks;
+    }
+    @Override
+    public void importData(String sym) {
+
+        importDataProcess.startImport();
     }
 
     @Override

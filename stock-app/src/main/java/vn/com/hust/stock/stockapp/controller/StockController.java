@@ -47,5 +47,9 @@ public class StockController {
     public void findStockByCode(@PathVariable String code){
         stockService.getStockByCode(code);
     }
+    @GetMapping("/import")
+    public void importData(){
+        stockService.importData("123");
+    }
 
 }

@@ -60,6 +60,7 @@ public class JwtTokenProvider {
                 .setExpiration(validity)//
                 .signWith(SignatureAlgorithm.HS256, secretKey)//
                 .compact();
+
     }
 
     public Authentication getAuthentication(String token) {

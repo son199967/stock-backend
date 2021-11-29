@@ -31,6 +31,7 @@ public class VolatilityStrategy {
             volatilityStrategy.setTime(map.getKey());
             long moneyStart = money;
             money =0;
+
             double totalTargetWeight = map.getValue().stream().reduce(0D, (s, e) -> s + e.getTargetWeight(), Double::sum);
             List<VolatilitySymbolsResponse> symbolsResponses = new ArrayList<>();
             if (start==false) {
@@ -48,8 +49,6 @@ public class VolatilityStrategy {
                 }
                 money +=  cash;
             }
-
-
             volatilityStrategy.setTotalMoney(money);
             if (money==0) money = moneyStart;
             long moneyData = money;
@@ -77,17 +76,17 @@ public class VolatilityStrategy {
                 asset.put(volatility.getSymbols(), stockHold);
                 priceLast.put(volatility.getSymbols(),m.getPriceHistory().getClose());
             });
+
             if (!asset.isEmpty()) start= false;
             double totalMoney = 0D;
             for(Map.Entry<String,Integer> holeStock: asset.entrySet()){
                 totalMoney += holeStock.getValue()* priceLast.get(holeStock.getKey())*1000;
             }
+
             double constrainedWeightsLeverageTotal = symbolsResponses.stream().reduce(0D, (s, e) -> s + e.getConstrainedWeightsLeverage(), Double::sum);
             double numberOfSharesWithEquityTotal = symbolsResponses.stream().reduce(0D, (s, e) -> s + e.getConstrainedWeightsLeverage(), Double::sum);
             volatilityStrategy.setCash(money - (long) totalMoney);
             cash = volatilityStrategy.getCash();
-            if (cash<0)
-                System.out.println("786");
             volatilityStrategy.setMoney((long) totalMoney);
             volatilityStrategy.setRemainMoney(money - volatilityStrategy.getMoney());
             volatilityStrategy.setTargetWight(totalTargetWeight);

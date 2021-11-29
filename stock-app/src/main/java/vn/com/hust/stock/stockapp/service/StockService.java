@@ -13,4 +13,6 @@ public interface StockService {
     Stock getStockByCode(String  name);
     List<Stock> filterStockBy(StockRequest stockRequest);
     List<String> search(String sym);
+    void importData(String sym);
+
 }
