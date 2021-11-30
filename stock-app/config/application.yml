@@ -33,9 +33,9 @@ spring:
       ddl-auto: update
   datasource:
     platform: mysql
-    url: jdbc:mysql://localhost:3306/stockdb?allowPublicKeyRetrieval=true&useSSL=false
-    username: root
-    password: root@1234
+    url: jdbc:mysql://20.124.105.142:3306/stockdb?allowPublicKeyRetrieval=true&useSSL=false
+    username: hust
+    password: hust@1234
   database:
     driver-class-name: com.mysql.cj.jdbc.Driver
 security:

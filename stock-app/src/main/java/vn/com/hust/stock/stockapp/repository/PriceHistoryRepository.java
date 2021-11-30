@@ -9,7 +9,7 @@ import java.util.List;
 public interface  PriceHistoryRepository extends CustomRepository<PriceHistory,Long> {
 
 
-    List<PriceHistory> findAllBySymOrderByTimeDesc(String sym);
+    List<PriceHistory> findAllBySymOrderByTimeAsc(String sym);
 
     @Query("select p.sym from PriceHistory p group by p.sym")
     List<String> findSymGroup();
