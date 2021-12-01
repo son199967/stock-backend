@@ -57,7 +57,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     @Autowired
     public PriceHistoryServiceImpl(PriceHistoryRepository priceHistoryRepository,GroupsStock groupsStock) {
         this.priceHistoryRepository = priceHistoryRepository;
-        scheduledExecutor = Executors.newScheduledThreadPool(30);
+        scheduledExecutor = Executors.newScheduledThreadPool(10);
         groupsStock = groupsStock;
         STOCK_ARRAYS = priceHistoryRepository.findSymGroup();
         STOCK_MAPS = groupsStock.STOCK_MAPS();
@@ -262,12 +262,10 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         List<PriceHistory> priceHistories1 = priceHistoryRepository.findAllBySymOrderByTimeAsc(symbol);
         if (ObjectUtils.isEmpty(priceHistories1)) return;
         double cumulativeLog = 1;
-        List<PriceHistory> dataSave = new ArrayList<>();
         for (int i = 1; i < priceHistories1.size(); i++) {
             CorePrice calculatePrice = new CorePrice(priceHistories1.get(i - 1), priceHistories1.get(i), NORMAL_DAY);
             cumulativeLog = calculatePrice.getCumulativeLogReturn();
-            dataSave.add(calculatePrice.getPriceHistory());
-            priceHistoryRepository.saveAll(dataSave);
+            priceHistoryRepository.save(calculatePrice.getPriceHistory());
         }
         return;
     }
@@ -387,6 +385,8 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         LocalDate returnBeforeYear= LocalDate.of(year-1,1,1);
         LocalDate return1BeforeYear = LocalDate.of(year,1,1);
 
+
+
         PriceHistoryRequest priceHistoryRequest = new PriceHistoryRequest();
         priceHistoryRequest.setSymbol(new ArrayList<>(Arrays.asList(sym)));
         priceHistoryRequest.setFromTime(return1BeforeYear);
@@ -420,6 +420,8 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         Double avgReturn1Month = priceHistories.stream().filter(p->p.getTime().isAfter(return1BeforeMonth)).mapToDouble(PriceHistory::getSimpleReturn).average().getAsDouble();
 
         List<PriceHistory> priceHistoryList =  priceSimplePriceSymbol(priceHistories,10000000,0.15,true,30);
+
+
 
         map.put("Avg "+year+ " Return (%)",avgReturnYear);
         map.put("Avg "+(year-1)+ " Return (%)",avgBeforeReturnYear);
