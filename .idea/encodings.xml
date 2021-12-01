@@ -3,7 +3,6 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/stock-app/config" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/stock-app/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/stock-app/target/generated-sources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/stock-gw/config" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/stock-gw/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/stock-job/config" charset="UTF-8" />

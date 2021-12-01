@@ -3,9 +3,13 @@ package vn.com.hust.stock.stockapp.Job;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import vn.com.hust.stock.stockapp.config.GroupsStock;
 import vn.com.hust.stock.stockapp.repository.PriceHistoryRepository;
+import vn.com.hust.stock.stockapp.service.NormalService;
 import vn.com.hust.stock.stockapp.service.PriceHistoryService;
 import vn.com.hust.stock.stockmodel.entity.PriceHistory;
+
+import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -21,46 +25,41 @@ import java.util.concurrent.ScheduledExecutorService;
 public class ImportDataProcess {
 
 
-
     private PriceHistoryRepository priceHistoryRepository;
-    private Map<String,List<String>> STOCK_ARRAYS = new HashMap<>();
+    private Map<String, List<String>> STOCK_ARRAYS = new HashMap<>();
 
 
     private static int a = 0;
-
+    private GroupsStock groupsStock;
     private static final String COMMA_DELIMITER = "\",\""; // Split by comma
-    private ScheduledExecutorService scheduledExecutor;
     private PriceHistoryService priceHistoryService;
+    private NormalService normalService;
 
 
     @Autowired
-    public ImportDataProcess(PriceHistoryRepository priceHistoryRepository ,PriceHistoryService priceHistoryService) {
-       this.priceHistoryRepository = priceHistoryRepository;
-       this.priceHistoryService = priceHistoryService;
-        scheduledExecutor = Executors.newScheduledThreadPool(10);
+    public ImportDataProcess(PriceHistoryRepository priceHistoryRepository,
+                             PriceHistoryService priceHistoryService,
+                             GroupsStock groupsStock, NormalService normalService) {
+        this.priceHistoryRepository = priceHistoryRepository;
+        this.priceHistoryService = priceHistoryService;
+        this.groupsStock = groupsStock;
+        this.normalService = normalService;
     }
 
-    public void startImport(){
-       CompletableFuture.runAsync(()-> importDataFromCsvFile());
-
-
-    }
-
-    private void importDataFromCsvFile(){
+    public void startImport() {
         priceHistoryRepository.deleteAll();
-        STOCK_ARRAYS.put("bds",Arrays.asList("VIC","VHM","VRE","PRD","KDH","REE","DXG","HDG","FLC","ITA"));
-        STOCK_ARRAYS.put("ck",Arrays.asList("SSI","VND","VCI","HCM","MBS","FTS","SHS","KLB","AGR","TVS"));
-        STOCK_ARRAYS.put("cn",Arrays.asList("FPT","FOX","CMG","SAM","SGT","ELC","VEC","ITD","TTN","CNC"));
-        STOCK_ARRAYS.put("dp",Arrays.asList("DGC","DHG","DVN","IMP","TRA","DMC","CSV","DCL","VFG","OPC"));
-        STOCK_ARRAYS.put("hk",Arrays.asList("ACV","VJC","HVN","SAS","SGN","NCT","NCS","MAS","NAS","ARM"));
-        STOCK_ARRAYS.put("bank",Arrays.asList("VCB","TCB","BID","CTG","MBB","VPB","ACB","SHB","STB","TPB","BVH","VIB","HDB","EIB","LPB","BAB","NVB","ABB","PVI","VBB"));
-        STOCK_ARRAYS.put("xd",Arrays.asList("VCG","DIG","DXG","CTD","HBC","ROS","VCP","VLB","TV2","CC1"));
-        STOCK_ARRAYS.put("dk",Arrays.asList("GAS","BSR","PLX","PVS","PVD","PVI","PVT","PLC","PET","PGS","BMI"));
-        STOCK_ARRAYS.put("nhua",Arrays.asList("NTP","BMP","AAA","DNP","SVI","INN","RDP","HII","VNP","MCP"));
-        STOCK_ARRAYS.put("common",Arrays.asList("VNINDEX","VN30","VN30_HOSE","HNX","HNX30","CONGNGHE","DAUKHI","DICHVU","DUOCPHAM","XAYDUNG",
-                "NANGLUONG","NGANHANG","NHUA","THEP","THUCPHAM","THUONGMAI","THUYSAN","UPCOM","VANTAI","VLXD"));
-        int a =0;
+        importDataFromCsvFile();
+        normalService.resetCache();
+    }
+
+    @Transactional
+    public void importDataFromCsvFile() {
+        List<String> stockGr = groupsStock.STOCK_ARRAYS();
+        int a = 0;
         BufferedReader br = null;
+        String stockExe = "";
+        List<PriceHistory> dataInsert = new ArrayList<>();
+        double cumulativeLog = 1;
         try {
             String line;
             br = new BufferedReader(new FileReader("/home/ntson6/amibroker_all_data.txt"));
@@ -69,8 +68,40 @@ public class ImportDataProcess {
                 String finalLine = line;
                 a++;
                 log.info("line : {}", line);
-                scheduledExecutor.execute(()-> addToDataBase(parseCsvLine(finalLine)));
-                System.out.println("aaaaaa------------>:"+a);
+                List<String> data = parseCsvLine(finalLine);
+                if (data.size() != 7) continue;
+                if (!stockGr.contains(data.get(0)))
+                    continue;
+                DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyyMMdd");
+                LocalDate datetime = LocalDate.parse(data.get(1), pattern);
+                PriceHistory priceHistory = new PriceHistory();
+                priceHistory.setSym(data.get(0));
+                priceHistory.setOpen(Double.parseDouble(data.get(2)));
+                priceHistory.setTime(datetime);
+                priceHistory.setHigh(Double.parseDouble(data.get(3)));
+                priceHistory.setLow(Double.parseDouble(data.get(4)));
+                priceHistory.setClose(Double.parseDouble(data.get(5)));
+                priceHistory.setVolume(Double.parseDouble(data.get(6)));
+                priceHistory.setPercent((priceHistory.getClose() - priceHistory.getOpen()) * 100 / priceHistory.getOpen());
+                if (!data.get(0).equals(stockExe)) {
+                    if (dataInsert.size() != 0)
+                        priceHistoryRepository.saveAll(dataInsert);
+                    stockExe = priceHistory.getSym();
+                    dataInsert = new ArrayList<>();
+                    cumulativeLog = 1;
+                } else {
+                    double priceT_1 = dataInsert.get(dataInsert.size() - 1).getClose();
+                    double simpleReturn = (priceHistory.getClose() - priceT_1) / priceT_1;
+                    double grossReturn = 1 + simpleReturn;
+                    double logReturn = Math.log(grossReturn);
+                    cumulativeLog = cumulativeLog * (1 + logReturn);
+                    priceHistory.setSimpleReturn(simpleReturn * 100);
+                    priceHistory.setGrossReturn(grossReturn * 100);
+                    priceHistory.setLogReturn(logReturn * 100);
+                    priceHistory.setCumulativeLog(cumulativeLog);
+                }
+                dataInsert.add(priceHistory);
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -82,37 +113,17 @@ public class ImportDataProcess {
                 crunchifyException.printStackTrace();
             }
         }
-        priceHistoryService.updateData();
     }
-    public  List<String> parseCsvLine(String csvLine) {
+
+    public List<String> parseCsvLine(String csvLine) {
         List<String> result = new ArrayList<String>();
         if (csvLine != null) {
             String[] splitData = csvLine.split(",");
             for (int i = 0; i < splitData.length; i++) {
-                result.add(splitData[i].replace("^",""));
+                result.add(splitData[i].replace("^", ""));
             }
         }
         return result;
     }
-    private  void addToDataBase(List<String> data) {
-        if (data.get(0).toCharArray().length!=3
-                && !Arrays.asList("VNINDEX","VN30","VN30_HOSE","HNX","HNX30","CONGNGHE","DAUKHI","DICHVU","DUOCPHAM","XAYDUNG",
-                "NANGLUONG","NGANHANG","NHUA","THEP","THUCPHAM","THUONGMAI","THUYSAN","UPCOM","VANTAI","VLXD")
-                .contains(data.get(0)))
-            return;
-        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate datetime = LocalDate.parse(data.get(1), pattern);
-       PriceHistory priceHistory = new PriceHistory();
-       priceHistory.setSym(data.get(0));
-       priceHistory.setOpen(Double.parseDouble(data.get(2)));
-       priceHistory.setTime(datetime);
-       priceHistory.setHigh(Double.parseDouble(data.get(3)));
-       priceHistory.setLow(Double.parseDouble(data.get(4)));
-       priceHistory.setClose(Double.parseDouble(data.get(5)));
-       if (priceHistory.getClose()==0d) return;
-       priceHistory.setVolume(Double.parseDouble(data.get(6)));
-       priceHistory.setPercent((priceHistory.getClose()-priceHistory.getOpen())*100/priceHistory.getOpen());
-       priceHistoryRepository.save(priceHistory);
-       System.out.println(priceHistory.toString()+ "done");
-    }
+
 }

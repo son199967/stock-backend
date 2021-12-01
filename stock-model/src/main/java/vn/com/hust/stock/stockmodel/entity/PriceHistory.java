@@ -41,6 +41,4 @@ public class PriceHistory {
     private double numberStock;
     private double money;
     private double priceStock;
-    @ManyToOne
-    private Stock stock;
 }

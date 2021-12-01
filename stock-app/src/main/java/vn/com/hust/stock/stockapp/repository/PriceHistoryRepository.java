@@ -3,7 +3,9 @@ package vn.com.hust.stock.stockapp.repository;
 import org.springframework.data.jpa.repository.Query;
 import vn.com.hust.stock.stockmodel.entity.PriceHistory;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface  PriceHistoryRepository extends CustomRepository<PriceHistory,Long> {
@@ -13,4 +15,5 @@ public interface  PriceHistoryRepository extends CustomRepository<PriceHistory,L
 
     @Query("select p.sym from PriceHistory p group by p.sym")
     List<String> findSymGroup();
+
 }

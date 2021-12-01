@@ -39,6 +39,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/users/**").permitAll()//
                 .antMatchers("/stock/**").permitAll()
                 .antMatchers("/price/**").permitAll()
+                .antMatchers("/normal/**").permitAll()
+
                 // Disallow everything else..
                 .anyRequest().authenticated();
 
@@ -61,6 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-ui.html")//
                 .antMatchers("/stock/**")
                 .antMatchers("/price/**")
+                .antMatchers("/normal/**")
                 .antMatchers("/group/**")
                 .antMatchers("/configuration/**")//
                 .antMatchers("/webjars/**")//
