@@ -3,6 +3,7 @@ package vn.com.hust.stock.stockapp.Job;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import vn.com.hust.stock.stockapp.config.GroupsStock;
 import vn.com.hust.stock.stockapp.repository.PriceHistoryRepository;
 import vn.com.hust.stock.stockapp.service.PriceHistoryService;
 import vn.com.hust.stock.stockmodel.entity.PriceHistory;
@@ -28,38 +29,32 @@ public class ImportDataProcess {
 
 
     private static int a = 0;
-
+    private GroupsStock groupsStock;
     private static final String COMMA_DELIMITER = "\",\""; // Split by comma
     private ScheduledExecutorService scheduledExecutor;
     private PriceHistoryService priceHistoryService;
 
 
     @Autowired
-    public ImportDataProcess(PriceHistoryRepository priceHistoryRepository ,PriceHistoryService priceHistoryService) {
+    public ImportDataProcess(PriceHistoryRepository priceHistoryRepository ,
+                             PriceHistoryService priceHistoryService,
+                             GroupsStock groupsStock) {
        this.priceHistoryRepository = priceHistoryRepository;
        this.priceHistoryService = priceHistoryService;
+       this.groupsStock = groupsStock;
         scheduledExecutor = Executors.newScheduledThreadPool(10);
     }
 
     public void startImport(){
-       CompletableFuture.runAsync(()-> importDataFromCsvFile());
-
-
+        try {
+            importDataFromCsvFile();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
-    private void importDataFromCsvFile(){
+    private void importDataFromCsvFile() throws InterruptedException {
         priceHistoryRepository.deleteAll();
-        STOCK_ARRAYS.put("bds",Arrays.asList("VIC","VHM","VRE","PRD","KDH","REE","DXG","HDG","FLC","ITA"));
-        STOCK_ARRAYS.put("ck",Arrays.asList("SSI","VND","VCI","HCM","MBS","FTS","SHS","KLB","AGR","TVS"));
-        STOCK_ARRAYS.put("cn",Arrays.asList("FPT","FOX","CMG","SAM","SGT","ELC","VEC","ITD","TTN","CNC"));
-        STOCK_ARRAYS.put("dp",Arrays.asList("DGC","DHG","DVN","IMP","TRA","DMC","CSV","DCL","VFG","OPC"));
-        STOCK_ARRAYS.put("hk",Arrays.asList("ACV","VJC","HVN","SAS","SGN","NCT","NCS","MAS","NAS","ARM"));
-        STOCK_ARRAYS.put("bank",Arrays.asList("VCB","TCB","BID","CTG","MBB","VPB","ACB","SHB","STB","TPB","BVH","VIB","HDB","EIB","LPB","BAB","NVB","ABB","PVI","VBB"));
-        STOCK_ARRAYS.put("xd",Arrays.asList("VCG","DIG","DXG","CTD","HBC","ROS","VCP","VLB","TV2","CC1"));
-        STOCK_ARRAYS.put("dk",Arrays.asList("GAS","BSR","PLX","PVS","PVD","PVI","PVT","PLC","PET","PGS","BMI"));
-        STOCK_ARRAYS.put("nhua",Arrays.asList("NTP","BMP","AAA","DNP","SVI","INN","RDP","HII","VNP","MCP"));
-        STOCK_ARRAYS.put("common",Arrays.asList("VNINDEX","VN30","VN30_HOSE","HNX","HNX30","CONGNGHE","DAUKHI","DICHVU","DUOCPHAM","XAYDUNG",
-                "NANGLUONG","NGANHANG","NHUA","THEP","THUCPHAM","THUONGMAI","THUYSAN","UPCOM","VANTAI","VLXD"));
         int a =0;
         BufferedReader br = null;
         try {
@@ -83,6 +78,7 @@ public class ImportDataProcess {
                 crunchifyException.printStackTrace();
             }
         }
+        Thread.sleep(30000);
         priceHistoryService.updateData();
     }
     public  List<String> parseCsvLine(String csvLine) {
@@ -96,10 +92,7 @@ public class ImportDataProcess {
         return result;
     }
     private  void addToDataBase(List<String> data) {
-        if (data.get(0).toCharArray().length!=3
-                && !Arrays.asList("VNINDEX","VN30","VN30_HOSE","HNX","HNX30","CONGNGHE","DAUKHI","DICHVU","DUOCPHAM","XAYDUNG",
-                "NANGLUONG","NGANHANG","NHUA","THEP","THUCPHAM","THUONGMAI","THUYSAN","UPCOM","VANTAI","VLXD")
-                .contains(data.get(0)))
+        if (!groupsStock.STOCK_ARRAYS().contains(data.get(0)))
             return;
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate datetime = LocalDate.parse(data.get(1), pattern);

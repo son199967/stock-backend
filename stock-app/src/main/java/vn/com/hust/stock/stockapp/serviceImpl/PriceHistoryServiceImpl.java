@@ -57,7 +57,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     @Autowired
     public PriceHistoryServiceImpl(PriceHistoryRepository priceHistoryRepository,GroupsStock groupsStock) {
         this.priceHistoryRepository = priceHistoryRepository;
-        scheduledExecutor = Executors.newScheduledThreadPool(10);
+        scheduledExecutor = Executors.newScheduledThreadPool(30);
         groupsStock = groupsStock;
         STOCK_ARRAYS = priceHistoryRepository.findSymGroup();
         STOCK_MAPS = groupsStock.STOCK_MAPS();
@@ -261,12 +261,14 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         priceHistoryRequest.setSymbol(new ArrayList<>(Arrays.asList(symbol)));
         List<PriceHistory> priceHistories1 = priceHistoryRepository.findAllBySymOrderByTimeDesc(symbol);
         if (ObjectUtils.isEmpty(priceHistories1)) return;
+        List<PriceHistory> priceSave = new ArrayList<>();
         double cumulativeLog = 1;
         for (int i = 1; i < priceHistories1.size(); i++) {
             CorePrice calculatePrice = new CorePrice(priceHistories1.get(i - 1), priceHistories1.get(i), NORMAL_DAY);
             cumulativeLog = calculatePrice.getCumulativeLogReturn();
-            priceHistoryRepository.save(calculatePrice.getPriceHistory());
+            priceSave.add(calculatePrice.getPriceHistory());
         }
+        priceHistoryRepository.saveAll(priceSave);
         return;
     }
 

@@ -31,10 +31,6 @@ public class Stock {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "stockPrice_id", referencedColumnName = "id")
     private StockPrice stockPrice;
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="stockInfo")
-    private PriceHistory priceHistory;
     @JsonManagedReference
     @OneToMany(mappedBy = "stock",cascade = CascadeType.MERGE)
     private List<Indicator> indicators;
