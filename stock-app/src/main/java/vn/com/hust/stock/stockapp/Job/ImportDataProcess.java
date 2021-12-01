@@ -7,7 +7,6 @@ import vn.com.hust.stock.stockapp.config.GroupsStock;
 import vn.com.hust.stock.stockapp.repository.PriceHistoryRepository;
 import vn.com.hust.stock.stockapp.service.PriceHistoryService;
 import vn.com.hust.stock.stockmodel.entity.PriceHistory;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -103,6 +102,7 @@ public class ImportDataProcess {
        priceHistory.setHigh(Double.parseDouble(data.get(3)));
        priceHistory.setLow(Double.parseDouble(data.get(4)));
        priceHistory.setClose(Double.parseDouble(data.get(5)));
+       if (priceHistory.getClose()==0d) return;
        priceHistory.setVolume(Double.parseDouble(data.get(6)));
        priceHistory.setPercent((priceHistory.getClose()-priceHistory.getOpen())*100/priceHistory.getOpen());
        priceHistoryRepository.save(priceHistory);

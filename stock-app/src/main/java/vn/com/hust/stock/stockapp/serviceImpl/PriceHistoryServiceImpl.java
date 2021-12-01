@@ -57,7 +57,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     @Autowired
     public PriceHistoryServiceImpl(PriceHistoryRepository priceHistoryRepository,GroupsStock groupsStock) {
         this.priceHistoryRepository = priceHistoryRepository;
-        scheduledExecutor = Executors.newScheduledThreadPool(30);
+        scheduledExecutor = Executors.newScheduledThreadPool(10);
         groupsStock = groupsStock;
         STOCK_ARRAYS = priceHistoryRepository.findSymGroup();
         STOCK_MAPS = groupsStock.STOCK_MAPS();
@@ -180,7 +180,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         for (String symbol : request.getSymbol()) {
             List<PriceHistory> priceHistories1 = new ArrayList<>();
 
-            List<PriceHistory> priceHistorieDatas =      priceHistoryRepository.findAllBySymOrderByTimeDesc(symbol);
+            List<PriceHistory> priceHistorieDatas =      priceHistoryRepository.findAllBySymOrderByTimeAsc(symbol);
             int indexOfLocalDate = priceHistorieDatas.indexOf(priceHistorieDatas.stream().filter(p->p.getTime().isAfter(request.getFromTime()))
                     .findFirst().orElseThrow(()->new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR)));
             if (indexOfLocalDate-request.getDay()*request.getReDay()<0){
@@ -250,7 +250,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     public List<PriceHistory> updateData() {
 
         STOCK_ARRAYS.stream().sorted(Comparator.comparing(String::length).reversed()).forEach( symbol ->{
-           scheduledExecutor.execute(()-> startUpddateDataSymbol(symbol));
+           startUpddateDataSymbol(symbol);
         });
         return null;
     }
@@ -259,16 +259,14 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         log.info("Start update sym stock {}", symbol);
         PriceHistoryRequest priceHistoryRequest = new PriceHistoryRequest();
         priceHistoryRequest.setSymbol(new ArrayList<>(Arrays.asList(symbol)));
-        List<PriceHistory> priceHistories1 = priceHistoryRepository.findAllBySymOrderByTimeDesc(symbol);
+        List<PriceHistory> priceHistories1 = priceHistoryRepository.findAllBySymOrderByTimeAsc(symbol);
         if (ObjectUtils.isEmpty(priceHistories1)) return;
-        List<PriceHistory> priceSave = new ArrayList<>();
         double cumulativeLog = 1;
         for (int i = 1; i < priceHistories1.size(); i++) {
             CorePrice calculatePrice = new CorePrice(priceHistories1.get(i - 1), priceHistories1.get(i), NORMAL_DAY);
             cumulativeLog = calculatePrice.getCumulativeLogReturn();
-            priceSave.add(calculatePrice.getPriceHistory());
+            priceHistoryRepository.save(calculatePrice.getPriceHistory());
         }
-        priceHistoryRepository.saveAll(priceSave);
         return;
     }
 
