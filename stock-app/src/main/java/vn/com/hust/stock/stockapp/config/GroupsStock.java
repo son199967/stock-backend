@@ -458,7 +458,7 @@ public class GroupsStock {
                 "PSI",
                 "LIG",
                 "DRI", "SZL", "CLL", "HWS", "VAV", "LSS"));
-        STOCK_MAP.put("COMMON", Arrays.asList("VNINDEX", "VN30", "VN30_HOSE", "HNX", "HNX30","UPCOM"));
+        STOCK_MAP.put("COMMON", Arrays.asList("VNINDEX", "VN30", "VN30_HOSE", "HASTC", "HNX30","UPCOM"));
         STOCK_MAP.put( "GROUPS", Arrays.asList("CONGNGHE", "DAUKHI", "DICHVU", "DUOCPHAM", "XAYDUNG",
                 "NANGLUONG", "NGANHANG", "NHUA", "THEP", "THUCPHAM", "THUONGMAI", "THUYSAN", "VANTAI", "VLXD", "HK"));
 

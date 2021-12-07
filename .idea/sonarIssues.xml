@@ -243,6 +243,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/serviceImpl/NormalServiceImpl.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/stock-app/src/main/java/vn/com/hust/stock/stockapp/serviceImpl/PriceHistoryServiceImpl.java">
           <value>
             <set />

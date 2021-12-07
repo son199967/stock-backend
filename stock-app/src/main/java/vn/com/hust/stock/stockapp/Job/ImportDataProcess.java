@@ -47,8 +47,12 @@ public class ImportDataProcess {
     }
 
     public void startImport() {
-        priceHistoryRepository.deleteAll();
+        log.info("Start delete all data");
+        for (String sym:priceHistoryRepository.findSymGroup())
+        priceHistoryRepository.deleteAllBySym(sym);
+        log.info("Finish delete all data");
         importDataFromCsvFile();
+        log.info("Start Reset Cache");
         normalService.resetCache();
     }
 
@@ -62,7 +66,7 @@ public class ImportDataProcess {
         double cumulativeLog = 1;
         try {
             String line;
-            br = new BufferedReader(new FileReader("/home/ntson6/amibroker_all_data.txt"));
+            br = new BufferedReader(new FileReader("/home/sonnguyen/amibroker_all_data.txt"));
             // How to read file in java line by line?
             while ((line = br.readLine()) != null) {
                 String finalLine = line;

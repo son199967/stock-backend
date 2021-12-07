@@ -13,6 +13,9 @@ public interface  PriceHistoryRepository extends CustomRepository<PriceHistory,L
 
     List<PriceHistory> findAllBySymOrderByTimeAsc(String sym);
 
+
+    void deleteAllBySym(String sym);
+
     @Query("select p.sym from PriceHistory p group by p.sym")
     List<String> findSymGroup();
 

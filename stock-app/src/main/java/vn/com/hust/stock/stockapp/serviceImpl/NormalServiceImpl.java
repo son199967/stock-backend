@@ -67,7 +67,7 @@ public class NormalServiceImpl implements NormalService {
         customIndex = new HashMap<>();
 
         PriceHistoryRequest request = new PriceHistoryRequest();
-        request.setFromTime(LocalDate.of(2021,01,01));
+        request.setFromTime(LocalDate.of(2000,01,01));
         request.setDay(20);
         request.setReDay(1);
         request.setRisk(0.12);
@@ -76,12 +76,15 @@ public class NormalServiceImpl implements NormalService {
         List<PriceHistory> vn30History =  priceHistoryService.calculateSimplePrice(request);
         request.setSymbol(List.of("VNINDEX"));
         List<PriceHistory> vnIndexHistory =  priceHistoryService.calculateSimplePrice(request);
-        request.setSymbol(List.of("UPCOM"));
-        List<PriceHistory> upComHistory = priceHistoryService.calculateSimplePrice(request);
+        request.setSymbol(List.of("HNX30"));
+        List<PriceHistory> hnx30 = priceHistoryService.calculateSimplePrice(request);
+        request.setSymbol(List.of("HASTC"));
+        List<PriceHistory> hasTc = priceHistoryService.calculateSimplePrice(request);
 
         customIndex.put("VN30",vn30History);
         customIndex.put("VNINDEX",vnIndexHistory);
-        customIndex.put("UPCOM",upComHistory);
+        customIndex.put("HASTC",hasTc);
+        customIndex.put("HNX30",hnx30);
 
         dataGroupHistogram = priceHistoryService.groupHistogram();
         lastDataStock = priceHistoryService.priceLast("percent","asc", new ArrayList<>());
