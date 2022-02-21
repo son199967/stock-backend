@@ -48,6 +48,7 @@ public class ImportDataProcess {
 
     public void startImport() {
         log.info("Start delete all data");
+        priceHistoryRepository.deleteAll();
         for (String sym:priceHistoryRepository.findSymGroup())
         priceHistoryRepository.deleteAllBySym(sym);
         log.info("Finish delete all data");
