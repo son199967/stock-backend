@@ -42,7 +42,6 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
 
 
 
-    private GroupsStock groupsStock;
 
     private Map<String, List<String>> STOCK_MAPS;
     private List<String> STOCK_ARRAYS;
@@ -55,12 +54,11 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     private EntityManager em;
 
     @Autowired
-    public PriceHistoryServiceImpl(PriceHistoryRepository priceHistoryRepository,GroupsStock groupsStock) {
+    public PriceHistoryServiceImpl(PriceHistoryRepository priceHistoryRepository) {
         this.priceHistoryRepository = priceHistoryRepository;
         scheduledExecutor = Executors.newScheduledThreadPool(10);
-        groupsStock = groupsStock;
         STOCK_ARRAYS = priceHistoryRepository.findSymGroup();
-        STOCK_MAPS = groupsStock.STOCK_MAPS();
+        STOCK_MAPS = new GroupsStock().STOCK_MAPS();
     }
 
     @Override

@@ -13,7 +13,7 @@ public class GroupsStock {
     private static Map<String, List<String>> STOCK_MAP = new HashMap<>();
     private static List<String> STOCK_ARRAYS = new ArrayList<>();
 
-    static {
+    public GroupsStock() {
         STOCK_MAP.put("STOCK",Arrays.asList("VIC",
                 "VCB",
                 "VHM",
@@ -465,7 +465,6 @@ public class GroupsStock {
         for (List<String> a : STOCK_MAP.values()) {
             STOCK_ARRAYS.addAll(a);
         }
-
     }
 
     public Map<String, List<String>> STOCK_MAPS(){

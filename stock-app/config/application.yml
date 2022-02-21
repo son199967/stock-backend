@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8081
   ssl:
     enabled: false
 
@@ -34,7 +34,7 @@ spring:
     generate_statistics: true
   datasource:
     platform: mysql
-    url: jdbc:mysql://20.185.2.235:3306/stockdb?allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mysql://13.68.193.134:3306/stockdb?allowPublicKeyRetrieval=true&useSSL=false
     username: hust
     password: hust@1234
   database:
