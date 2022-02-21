@@ -5,4 +5,3 @@ public interface StorageProvider {
 
     String getLocation();
 }
-NormalServiceImpl
