@@ -87,7 +87,7 @@ public class ImportDataProcess {
         BufferedReader br = null;
         try {
             String line;
-            br = new BufferedReader(new FileReader("/Users/sonnguyen/Documents/HUST/amibroker_all_data.txt"));
+            br = new BufferedReader(new FileReader("/home/sonnguyen/job/amibroker_all_data.txt"));
 
             // How to read file in java line by line?
             while ((line = br.readLine()) != null) {
