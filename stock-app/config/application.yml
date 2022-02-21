@@ -34,7 +34,7 @@ spring:
     generate_statistics: true
   datasource:
     platform: mysql
-    url: jdbc:mysql://13.68.193.134:3306/stockdb?allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/stockdb?allowPublicKeyRetrieval=true&useSSL=false
     username: hust
     password: hust@1234
   database:
