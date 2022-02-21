@@ -318,6 +318,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     @Override
     public List<PriceHistory> groupHistogram() {
         List<String> stocks = STOCK_MAPS.get("GROUPS");
+        System.out.println("size ::"+stocks.size());;
         return priceLast("simple", "asc", stocks);
     }
 
