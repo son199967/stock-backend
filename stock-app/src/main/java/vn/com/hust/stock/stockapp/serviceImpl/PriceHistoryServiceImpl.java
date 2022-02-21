@@ -241,7 +241,7 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     @Override
     public List<PriceHistory> priceLast(String field, String order, List<String> syms) {
         LocalDate localDate = new JPAQuery<>(em).select(Q_Price.time).from(Q_Price).orderBy(Q_Price.time.desc()).limit(1).fetch().get(0);
-        return queryPolicyJoin(field, order, localDate, syms);
+        return queryPolicyJoin(field, order, localDate.minusDays(1), syms);
     }
 
     @Override
@@ -318,8 +318,8 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
     @Override
     public List<PriceHistory> groupHistogram() {
         List<String> stocks = STOCK_MAPS.get("GROUPS");
-        System.out.println("size ::"+stocks.size());;
-        return priceLast("simple", "asc", stocks);
+        List<PriceHistory> data = priceLast("simple", "asc", stocks);
+        return data;
     }
 
     @Override
